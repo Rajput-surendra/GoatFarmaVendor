@@ -149,7 +149,7 @@ List<String> moduleList = [];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
+    return  uImage == null ? Center(child: CircularProgressIndicator()):Scaffold(
       backgroundColor: colors.grad1Color,
       body: SingleChildScrollView(
         child: SizedBox(
@@ -206,7 +206,7 @@ List<String> moduleList = [];
                                 ],
                               ),
                               Text(
-                                "${getTranslated(context, "MOBILE_NO.")}: $uMobile",
+                                "${getTranslated(context, "MOBILE_NO")}: $uMobile",
                                 style: TextStyle(
                                     fontSize: 11, color: colors.blackTemp,fontWeight: FontWeight.bold),
                               ),

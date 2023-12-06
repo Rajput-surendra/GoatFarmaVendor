@@ -26,6 +26,13 @@ class ApiService {
   static const String  getDeathSingle = baseUrl+'animal_data_deth';
   static const String  addDeath = baseUrl+'add_deth';
   static const String  getDeathList = baseUrl+'deth_reports';
+  static const String  punchIn = baseUrl+'punch_in';
+  static const String  punchOut = baseUrl+'punch_out';
+  static const String  matingAnimalDate = baseUrl+'meating_animal_data';
+  static const String  addMating = baseUrl+'add_meating';
+  static const String  checkBreedMating = baseUrl+'check_breed';
+  static const String  getMatingList = baseUrl+'meating_list';
+  static const String  getSupplementList = baseUrl+'suplimet_list';
 }
 
 

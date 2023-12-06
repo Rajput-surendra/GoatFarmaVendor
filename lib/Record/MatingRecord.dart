@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 
 import '../../Helper/Appbar.dart';
 import '../../Helper/CustomCard.dart';
 import '../../Utils/Colors.dart';
+import '../ApiPath/Api.dart';
+import '../Helper/session.dart';
+import '../Model/MatingAnimalRecord/get_mating_list_model.dart';
 import '../Screens/AddNewMating.dart';
 
 
@@ -17,12 +21,18 @@ class MatingRecord extends StatefulWidget {
 
 class _MatingRecordState extends State<MatingRecord> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getBreedMatingApi("");
+  }
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: customAppBar(
         context: context,
-        text: "Mating Record",
+        text: getTranslated(context, "MATING_RECORD"),
         isTrue: true,
       ),
       floatingActionButton: FloatingActionButton(
@@ -71,10 +81,13 @@ class _MatingRecordState extends State<MatingRecord> {
                     height: 55,
                     child: Center(
                       child: TextFormField(
+                        onChanged: (v){
+                          getBreedMatingApi(v);
+                        },
                         // controller: supplementController,
                         decoration: InputDecoration(
                             suffixIcon:Container(
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.only(top: 8,left: 5),
                               child: Image.asset("assets/images/Group 72309.png"),
                             ),
                             border: InputBorder.none),
@@ -112,10 +125,174 @@ class _MatingRecordState extends State<MatingRecord> {
                 name5: 'Weight :', name6: 'Status : Empty',
               ),
 
+              Container(
+                height: MediaQuery.of(context).size.height,
+                child: RefreshIndicator(
+                  onRefresh: () {
+                    return Future.delayed(
+                      Duration(seconds: 2),
+                          () {
+                            getBreedMatingApi("");
+                      },
+                    );
+                  },
+                  child: matingListModel == null || matingListModel == ""
+                      ? Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (context, i) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height / 1.0,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: matingListModel!.data!.length,
+                              itemBuilder: (context, i) {
+                                return InkWell(
+                                  onTap: (){
+                                    //Navigator.push(context, MaterialPageRoute(builder: (context)=>getDeathModel(animalId: breedListModel!.data![i].animalId)));
+                                  },
+                                  child: Card(
+                                    elevation: 1,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                      '${getTranslated(context, "TAG_ID")}'
+                                                          ": "),
+                                                  Text(
+                                                    '${matingListModel!.data![i].femaleId}',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                      '${getTranslated(context, "Age")}'
+                                                          ": "),
+                                                  // Text(
+                                                  //   '${matingListModel!.data![i].age}',
+                                                  //   style: TextStyle(
+                                                  //       color: colors.blackTemp,
+                                                  //       fontWeight:
+                                                  //       FontWeight.bold),
+                                                  // ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 2,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                      '${getTranslated(context, "DEATH")}'
+                                                          ": "),
+                                                  // Text(
+                                                  //   '${matingListModel!.data![i]}',
+                                                  //   style: TextStyle(
+                                                  //       color: colors.blackTemp,
+                                                  //       fontWeight:
+                                                  //       FontWeight.bold),
+                                                  // ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                      '${getTranslated(context, "GENDER")}'
+                                                          ": "),
+                                                  // Text(
+                                                  //   '${matingListModel!.data![i].gander}',
+                                                  //   style: TextStyle(
+                                                  //       color: colors.blackTemp,
+                                                  //       fontWeight:
+                                                  //       FontWeight.bold),
+                                                  // ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          // Row(
+                                          //   mainAxisAlignment:
+                                          //   MainAxisAlignment.spaceBetween,
+                                          //   children: [
+                                          //     Row(
+                                          //       children: [
+                                          //         Text(
+                                          //             '${getTranslated(context, "WEIGHT")}'
+                                          //                 ": "),
+                                          //         Text(
+                                          //           '${matingListModel!.data![i].weight}',
+                                          //           style: TextStyle(
+                                          //               color: colors.blackTemp,
+                                          //               fontWeight:
+                                          //               FontWeight.bold),
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //     Row(
+                                          //       children: [
+                                          //         Text(
+                                          //             '${getTranslated(context, "REASON")}'
+                                          //                 ": "),
+                                          //         Text(
+                                          //           '${matingListModel!.data![i].reason}',
+                                          //           style: TextStyle(
+                                          //               color: colors.blackTemp,
+                                          //               fontWeight:
+                                          //               FontWeight.bold),
+                                          //         ),
+                                          //       ],
+                                          //     )
+                                          //   ],
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        );
+                      }),
+                ),
+              ),
+
             ],
           ),
         ),
       ),
     );
+  }
+  GetMatingListModel? matingListModel;
+  getBreedMatingApi(String? tagId) async {
+    var parameter = {
+      'animal_id':tagId
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMatingList), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        matingListModel = GetMatingListModel.fromJson(getData);
+        Fluttertoast.showToast(msg: "${msg}");
+
+      });
+
+    });
   }
 }

@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:madhu_farma/Helper/Colors.dart';
 import 'package:madhu_farma/Helper/CustomButton.dart';
 import 'package:madhu_farma/Helper/session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../ApiPath/Api.dart';
 import '../Helper/Appbar.dart';
 
 class PunchInScreen extends StatefulWidget {
@@ -51,10 +55,33 @@ class _PunchInScreenState extends State<PunchInScreen> {
       });
     }
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    geUserId();
+    convertDateTimeDisplay();
+  }
+  String _twoDigits(int n) {
+    if (n >= 10) return '$n';
+    return '0$n';
+  }
+  String? formattedMonth ;
+  var dateFormate;
+  String? formattedDate;
+  String? timeData;
+  convertDateTimeDisplay() {
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    formattedDate = formatter.format(now);
+    timeData = DateFormat("hh:mm a").format(DateTime.now());
+    formattedMonth = '${_twoDigits(now.month)}';
+  }
+bool done =  false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: colors.grad1Color,
       appBar: customAppBar(
         context: context,
@@ -69,6 +96,7 @@ class _PunchInScreenState extends State<PunchInScreen> {
           //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+
             SizedBox(
               height: 20,
             ),
@@ -99,7 +127,7 @@ class _PunchInScreenState extends State<PunchInScreen> {
             SizedBox(
               height: 10,
             ),
-            Text('Time :09:15 am'),
+            Text('${timeData}'),
             SizedBox(
               height: 10,
             ),
@@ -107,22 +135,90 @@ class _PunchInScreenState extends State<PunchInScreen> {
             Btn(
               height: 50,
               width: 150,
-              title: getTranslated(context, "PUNCH_IN"),
+              title: isLoading == true ? getTranslated(context, "PLEASE"): checkStatus == "present"  ?  getTranslated(context, "PUNCH_OUT"):getTranslated(context, "PUNCH_IN"),
               onPress: (){
+                if(done == false){
+                  addPunchInApi();
+                }else{
+                  addPunchOutApi();
+                }
 
             },),
 
             SizedBox(
               height: 50,
             ),
-            Text(
-              'Save Successfully',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
+            // Text(
+            //   'Save Successfully',
+            //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            // ),
           ],
         ),
       ),
     );
+  }
+
+  String? userId ;
+  geUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId  =  prefs.getString('userId');
+    setState(() {});
+  }
+bool isLoading =  false;
+
+  String? checkStatus;
+  int? punChID;
+  Future<void> addPunchInApi() async {
+    setState(() {
+      isLoading = true;
+    });
+    var parameter = {
+      'user_id':userId,
+      'date':formattedDate,
+      'in_time':timeData,
+      'month':formattedMonth,
+      'status': 'present'
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.punchIn), parameter).then((getData) async {
+      checkStatus = getData['data']['status'];
+      punChID = getData['punch_id'];
+       setState(() {
+             isLoading = false;
+            });
+        setState(() {
+          Fluttertoast.showToast(msg: "${getData['message']}");
+        //  Navigator.pop(context);
+        });
+
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+
+  Future<void> addPunchOutApi() async {
+    setState(() {
+      isLoading = true;
+    });
+    var parameter = {
+      'punch_id':punChID,
+      'out_time':timeData
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.punchOut), parameter).then((getData) async {
+      checkStatus = getData['data']['status'];
+      setState(() {
+        isLoading = false;
+      });
+      setState(() {
+        Fluttertoast.showToast(msg: "${getData['message']}");
+        //  Navigator.pop(context);
+      });
+
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 }
 

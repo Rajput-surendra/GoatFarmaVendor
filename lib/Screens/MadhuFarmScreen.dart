@@ -133,63 +133,66 @@ class _MadhuFarmScreenState extends State<MadhuFarmScreen> {
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)
-                  ),
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  elevation: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<AnimalCatList>(
-                        hint: const Text('Select Farm',
-                          style: TextStyle(
-                              color: colors.black54,fontWeight: FontWeight.w500,fontSize:15
-                          ),),
-                        value: animalCat,
-                        icon:  const Padding(
-                          padding: EdgeInsets.only(left:0.0),
-                          child: Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 30,),
-                        ),
-                        style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
-                        underline: Padding(
-                          padding: const EdgeInsets.only(left: 0,right: 0),
-                          child: Container(
-                            // height: 2,
-                            color:  colors.whiteTemp,
+                Container(
+                  width: double.infinity,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<AnimalCatList>(
+                          hint: const Text('Select Farm',
+                            style: TextStyle(
+                                color: colors.black54,fontWeight: FontWeight.w500,fontSize:15
+                            ),),
+                          value: animalCat,
+                          icon:  const Padding(
+                            padding: EdgeInsets.only(left:0.0),
+                            child: Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 30,),
                           ),
-                        ),
-                        onChanged: (AnimalCatList? value) {
-                          setState(() {
-                            animalCat = value!;
-                            animalCountApi(animalCat!.id);
-                          });
-                        },
-                        items: animalCatResponse?.data?.map((items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child:  Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width/1.42,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 0),
-                                        child: Text(items.name.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
-                                      )),
-                                ),
-
-                              ],
+                          style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                          underline: Padding(
+                            padding: const EdgeInsets.only(left: 0,right: 0),
+                            child: Container(
+                              // height: 2,
+                              color:  colors.whiteTemp,
                             ),
-                          );
-                        })
-                    .toList(),
-                   ),
+                          ),
+                          onChanged: (AnimalCatList? value) {
+                            setState(() {
+                              animalCat = value!;
+                              animalCountApi(animalCat!.id);
+                            });
+                          },
+                          items: animalCatResponse?.data?.map((items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child:  Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Container(
+                                        width: MediaQuery.of(context).size.width/1.42,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: 0),
+                                          child: Text(items.name.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
+                                        )),
+                                  ),
 
+                                ],
+                              ),
+                            );
+                          })
+                      .toList(),
+                     ),
+
+                      ),
                     ),
                   ),
                 ),
