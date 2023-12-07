@@ -149,7 +149,10 @@ List<String> moduleList = [];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return  uImage == null ? Center(child: CircularProgressIndicator()):Scaffold(
+    return
+
+
+      uImage == null ? Center(child: CircularProgressIndicator()):Scaffold(
       backgroundColor: colors.grad1Color,
       body: SingleChildScrollView(
         child: SizedBox(

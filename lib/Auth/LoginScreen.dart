@@ -38,29 +38,40 @@ class _LoginScreenState extends State<LoginScreen> {
 
     };
     apiBaseHelper.postAPICall(Uri.parse(ApiService.login), parameter).then((getData) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+
+
+
       bool error = getData['error'];
-      String uId =  getData['data'][0]['id'];
-      String uName =  getData['data'][0]['username'];
-      String uMobile =  getData['data'][0]['mobile'];
-      String uImage =  getData['data'][0]['image'];
-      setState(() {
-        isLoading = false;
-      });
-      if (error ==  false) {
+      String msg=getData['message'];
+
+      if(error==false) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        String uId = getData['data'][0]['id'];
+        String uName = getData['data'][0]['username'];
+        String uMobile = getData['data'][0]['mobile'];
+        String uImage = getData['data'][0]['image'];
         prefs.setString('userId', uId);
         prefs.setString('username', uName);
         prefs.setString('mobile', uMobile);
         prefs.setString('image', uImage);
         setState(() {
           Fluttertoast.showToast(msg: "${getData['message']}");
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MadhuFarmScreen()));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => MadhuFarmScreen()));
         });
 
+
+        setState(() {
+          isLoading = false;
+        });
       }
-      setState(() {
-        isLoading = false;
-      });
+      else{
+
+        Fluttertoast.showToast(msg: msg.toString());
+      }
     });
   }
   @override
