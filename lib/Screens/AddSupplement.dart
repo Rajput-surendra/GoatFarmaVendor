@@ -1,10 +1,15 @@
+import 'dart:math';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
+import '../ApiPath/Api.dart';
 import '../Helper/AppBtn.dart';
 import '../Helper/Appbar.dart';
+import '../Model/animal_cat_model_response.dart';
 import '../Utils/Colors.dart';
 // import '../Helper/toast.dart';
 
@@ -20,10 +25,12 @@ class _AddSupplementState extends State<AddSupplement> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    supplementController.text = "SP001";
+    getCatApi();
+    int randomString = Random().nextInt(1000);
+supplementController.text="SP${randomString}";
   }
 
-  String? catValue;
+  dynamic? catValue;
 
   final List<String> catValueitems = [
     'Categories',
@@ -48,14 +55,22 @@ class _AddSupplementState extends State<AddSupplement> {
   ];
 
   String? weightValue;
+  String ?selectBread;
+String ?selectUnit;
 
-  final List<String> weightValueitems = ['45 kg', '48 kg', '30 kg'];
+  final List<String> weightValueitems = ["Kids","Male","Female","Pregnent","Matted","All"];
+  final List<String> Unititems = ["KG","Liter","No","ML","G","MG"];
+
 
   String? supplementSelectValue;
 
   final List<String> supplementSelectValueitems = ['MAKKA', 'GENHU', 'CHANA'];
 
   TextEditingController supplementController = new TextEditingController();
+  TextEditingController supplementnamecontroller = new TextEditingController();
+  TextEditingController supplementcontroller = new TextEditingController();
+  TextEditingController weightcontroller = new TextEditingController();
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -69,6 +84,7 @@ class _AddSupplementState extends State<AddSupplement> {
           text: "Add Supplement",
           isTrue: true,
         ),
+
         body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -101,18 +117,11 @@ class _AddSupplementState extends State<AddSupplement> {
                                     child: TextFormField(
                                       controller: supplementController,
                                       decoration: InputDecoration(
-                                          suffixIcon: Container(
-                                            padding: EdgeInsets.all(10),
-                                            child: Image.asset("assets/images/Group 72309.png"),
-                                          ),
+
                                           contentPadding: EdgeInsets.only(left: 10),
                                           border: InputBorder.none),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please Enter 2nd onwards';
-                                        }
-                                        return null;
-                                      },
+
+
                                     ),
                                   ),
                                 ),
@@ -149,79 +158,46 @@ class _AddSupplementState extends State<AddSupplement> {
                                     ),
                                     Card(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(
+                                        padding:  EdgeInsets.only(
                                             top: 3, bottom: 3),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
+                                        child:
+
+//
+//
+//
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton2<dynamic>(
                                             isExpanded: true,
-                                            hint: const Padding(
-                                              padding: EdgeInsets.only(bottom: 0),
+                                            hint: Text(
+                                              'Select Item',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Theme.of(context).hintColor,
+                                              ),
+                                            ),
+                                            items: catList
+                                                .map((dynamic item) => DropdownMenuItem<dynamic>(
+                                              value: item,
                                               child: Text(
-                                                "Select Category",
-                                                style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 12),
+                                                item.name,
+                                                style:  TextStyle(
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                            ),
-                                            // dropdownColor: colors.primary,
+                                            ))
+                                                .toList(),
                                             value: catValue,
-                                            icon: const Padding(
-                                              padding: EdgeInsets.only(right: 5),
-                                              child: Icon(
-                                                Icons.keyboard_arrow_down_rounded,
-                                                color: colors.secondary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            // elevation: 16,
-                                            style: TextStyle(
-                                                color: colors.secondary,
-                                                fontWeight: FontWeight.bold),
-                                            underline: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 0, right: 0),
-                                              child: Container(
-                                                // height: 2,
-                                                color: colors.whiteTemp,
-                                              ),
-                                            ),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
+                                            onChanged: (dynamic value) {
                                               setState(() {
-                                                catValue = value!;
+                                                catValue = value;
+                                                catId=value.id;
+                                                print(catId);
                                               });
                                             },
 
-                                            items: catValueitems
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(4.0),
-                                                          child: Text(
-                                                            value,
-                                                            style: const TextStyle(
-                                                                color: colors.textColor,
-                                                                fontWeight:
-                                                                FontWeight.normal),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList(),
                                           ),
                                         ),
+
                                       ),
                                     ),
                                   ],
@@ -295,7 +271,37 @@ class _AddSupplementState extends State<AddSupplement> {
                                             onChanged: (String? value) {
                                               // This is called when the user selects an item.
                                               setState(() {
+
                                                 weightValue = value!;
+                                                print(weightValue);
+                                                if(weightValue=="Kids") {
+                                                  selectBread = "kids";
+
+                                                }
+                                                else if(weightValue=="Male") {
+                                                  selectBread = "male";
+
+                                                }
+                                                else if(weightValue=="Female") {
+                                                  selectBread = "female";
+
+                                                }
+                                                else if(weightValue=="Pregnent") {
+                                                  selectBread = "pregnent";
+
+                                                }
+                                                else if(weightValue=="Matted") {
+                                                  selectBread = "matted";
+
+                                                }
+                                                else if(weightValue=="All") {
+                                                  selectBread = "all";
+
+                                                }
+
+
+                                                print(selectBread);
+
                                               });
                                             },
 
@@ -344,6 +350,9 @@ class _AddSupplementState extends State<AddSupplement> {
                     SizedBox(
                       height: 10,
                     ),
+
+
+
                     Row(
                       children: [
                         SizedBox(
@@ -355,239 +364,263 @@ class _AddSupplementState extends State<AddSupplement> {
                         ),
                       ],
                     ),
+
+
+
+
+
                     Card(
                       child: Container(
                         height: 55,
                         child: TextFormField(
+                          controller: supplementnamecontroller,
                           decoration: InputDecoration(
+                            hintText: "Supplement Name",
                               contentPadding: EdgeInsets.only(left: 10),
                               border: InputBorder.none),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please Enter 2nd onwards';
+                              return 'Please Enter Supplement Name';
                             }
                             return null;
                           },
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
+
+
+                    SizedBox(height: 8,),
+
+
+                    Card(child:
+
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(children: [
+
+
+
+                        Row(
+                          children: [
+
+
+
+                            Expanded
+                              (
+                              child: SizedBox(
+                                height: 80,
+                                
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "Supplement",
-                                          style: TextStyle(
-                                              color: colors.blacktextColor),
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "Supplement",
+                                      style: TextStyle(
+                                          color: colors.blacktextColor),
                                     ),
                                     Card(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
                                             top: 3, bottom: 3),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Padding(
-                                              padding: EdgeInsets.only(bottom: 0),
-                                              child: Text(
-                                                "Type",
-                                                style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                            // dropdownColor: colors.primary,
-                                            value: typeValue,
-                                            icon: const Padding(
-                                              padding: EdgeInsets.only(right: 5),
-                                              child: Icon(
-                                                Icons.keyboard_arrow_down_rounded,
-                                                color: colors.secondary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            // elevation: 16,
-                                            style: TextStyle(
-                                                color: colors.secondary,
-                                                fontWeight: FontWeight.bold),
-                                            underline: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 0, right: 0),
-                                              child: Container(
-                                                // height: 2,
-                                                color: colors.whiteTemp,
-                                              ),
-                                            ),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              setState(() {
-                                                typeValue = value!;
-                                              });
-                                            },
+                                        child:
 
-                                            items: typeValueitems
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(4.0),
-                                                          child: Text(
-                                                            value,
-                                                            style: const TextStyle(
-                                                                color: colors.textColor,
-                                                                fontWeight:
-                                                                FontWeight.normal),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                          ),
+                                        TextFormField(
+                                          controller: supplementcontroller,
+                                          decoration: InputDecoration(
+                                              hintText: "Supplement",
+                                              contentPadding: EdgeInsets.only(left: 10),
+                                              border: InputBorder.none),
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please Enter Supplement';
+                                            }
+                                            return null;
+                                          },
                                         ),
+
+
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
+                            ),
+
+
+
+                            Expanded(
+                              child: SizedBox(
+                                height: 80,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+
                                   children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "Weight",
-                                          style: TextStyle(
-                                              color: colors.blacktextColor),
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "Weight",
+                                      style: TextStyle(
+                                          color: colors.blacktextColor),
                                     ),
                                     Card(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
                                             top: 3, bottom: 3),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
+                                        child:
 
-                                            isExpanded: true,
-                                            hint: const Padding(
-                                              padding: EdgeInsets.only(bottom: 0),
-                                              child: Text(
-                                                "Select Weight",
-                                                style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                            // dropdownColor: colors.primary,
-                                            value: weightValue,
-                                            icon: const Padding(
-                                              padding: EdgeInsets.only(right: 5),
-                                              child: Icon(
-                                                Icons.keyboard_arrow_down_rounded,
-                                                color: colors.secondary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            // elevation: 16,
-                                            style: TextStyle(
-                                                color: colors.secondary,
-                                                fontWeight: FontWeight.bold),
-                                            underline: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 0, right: 0),
-                                              child: Container(
-                                                // height: 2,
-                                                color: colors.whiteTemp,
-                                              ),
-                                            ),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              setState(() {
-                                                weightValue = value!;
-                                              });
-                                            },
-
-                                            items: weightValueitems
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(4.0),
-                                                          child: Text(
-                                                            value,
-                                                            style: const TextStyle(
-                                                                color: colors.textColor,
-                                                                fontWeight:
-                                                                FontWeight.normal),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                          ),
+                                        TextFormField(
+                                          controller: weightcontroller,
+                                          decoration: InputDecoration(
+                                              hintText: "Weight",
+                                              contentPadding: EdgeInsets.only(left: 10),
+                                              border: InputBorder.none),
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please Enter Weight';
+                                            }
+                                            return null;
+                                          },
                                         ),
+
+
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+SizedBox(height: 5,),
+                        SizedBox(
+                          height: 80,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
                               SizedBox(
-                                height: 10,
+                                width: 5,
+                              ),
+                              Text(
+                                "Unit",
+                                style: TextStyle(
+                                    color: colors.blacktextColor),
+                              ),
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 3, bottom: 3),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Padding(
+                                        padding: EdgeInsets.only(bottom: 0),
+                                        child: Text(
+                                          "Select Unit",
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 14),
+                                        ),
+                                      ),
+                                      // dropdownColor: colors.primary,
+                                      value: weightValue,
+                                      icon: const Padding(
+                                        padding: EdgeInsets.only(right: 5),
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: colors.secondary,
+                                          size: 30,
+                                        ),
+                                      ),
+                                      // elevation: 16,
+                                      style: TextStyle(
+                                          color: colors.secondary,
+                                          fontWeight: FontWeight.bold),
+                                      underline: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 0, right: 0),
+                                        child: Container(
+                                          // height: 2,
+                                          color: colors.whiteTemp,
+                                        ),
+                                      ),
+                                      onChanged: (String? value) {
+                                        // This is called when the user selects an item.
+                                        setState(() {
+                                          selectUnit = value!;
+                                        });
+                                      },
+
+                                      items: Unititems
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                    const EdgeInsets.all(4.0),
+                                                    child: Text(
+                                                      value,
+                                                      style: const TextStyle(
+                                                          color: colors.textColor,
+                                                          fontWeight:
+                                                          FontWeight.normal),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList(),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ]),
+                       ),
+                      ),
+                    Row(children: [
+                     Spacer(),
+                      InkWell(
+                        onTap: () {
+                          if(supplementController.text.isEmpty||weightcontroller.text.isEmpty||selectUnit==null) {
+                            Fluttertoast.showToast(msg: "Please Fill All the Field");
+                          }else{
+                            Map<String, String> newCat = {
+                              "supplement": "${supplementController.text}",
+                              "weight": "${weightcontroller.text}",
+                              "unit": "${selectUnit.toString()}"
+                            };
+                            supplimentList.add(newCat);
+                          }
+                          },
+                        child: Container(
+                          decoration: BoxDecoration(borderRadius:BorderRadius.circular(5),color: colors.primary),
+                          height: 30,
+                        width: 50,
+                          child: Center(child: Text('Add'),),
+                        ),
+                      ),
+                    ],),
+                    SizedBox(height: 10,),
+                    supplimentList.isEmpty?SizedBox.shrink():
                     Card(
                       elevation: 1.0,
                       shape: RoundedRectangleBorder(
@@ -610,13 +643,12 @@ class _AddSupplementState extends State<AddSupplement> {
                               children: [
 
                                 Text(
-                                  "Name",
+                                  "${supplimentList}",
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: colors.secondary),
                                 ),
-
                                 Text(
                                   "Percentage",
                                   style: TextStyle(
@@ -624,7 +656,6 @@ class _AddSupplementState extends State<AddSupplement> {
                                       fontWeight: FontWeight.bold,
                                       color: colors.secondary),
                                 ),
-
                                 Text(
                                   "Unit",
                                   style: TextStyle(
@@ -809,157 +840,157 @@ class _AddSupplementState extends State<AddSupplement> {
                     SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "Body Weight",
-                                          style: TextStyle(
-                                              color: colors.blacktextColor),
-                                        ),
-                                      ],
-                                    ),
-                                    Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 3, bottom: 3),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Padding(
-                                              padding: EdgeInsets.only(bottom: 0),
-                                              child: Text(
-                                                "1 kg",
-                                                style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                            // dropdownColor: colors.primary,
-                                            value: catValue,
-                                            icon: const Padding(
-                                              padding: EdgeInsets.only(right: 5),
-                                              child: Icon(
-                                                Icons.keyboard_arrow_down_rounded,
-                                                color: colors.secondary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            // elevation: 16,
-                                            style: TextStyle(
-                                                color: colors.secondary,
-                                                fontWeight: FontWeight.bold),
-                                            underline: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 0, right: 0),
-                                              child: Container(
-                                                // height: 2,
-                                                color: colors.whiteTemp,
-                                              ),
-                                            ),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              setState(() {
-                                                catValue = value!;
-                                              });
-                                            },
-
-                                            items: catValueitems
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(4.0),
-                                                          child: Text(
-                                                            value,
-                                                            style: const TextStyle(
-                                                                color: colors.textColor,
-                                                                fontWeight:
-                                                                FontWeight.normal),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "Dose",
-                                          style: TextStyle(
-                                              color: colors.blacktextColor),
-                                        ),
-                                      ],
-                                    ),
-                                    Card(
-                                      child: Container(
-
-                                          height: 50,
-                                          width: MediaQuery.of(context).size.width/2,
-                                          child: TextFormField(
-
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.only(top: 2,left: 5),
-                                                border: InputBorder.none),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Expanded(
+                    //             child: Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                       width: 5,
+                    //                     ),
+                    //                     Text(
+                    //                       "Body Weight",
+                    //                       style: TextStyle(
+                    //                           color: colors.blacktextColor),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //                 Card(
+                    //                   child: Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         top: 3, bottom: 3),
+                    //                     child: DropdownButtonHideUnderline(
+                    //                       child: DropdownButton2<String>(
+                    //                         isExpanded: true,
+                    //                         hint: const Padding(
+                    //                           padding: EdgeInsets.only(bottom: 0),
+                    //                           child: Text(
+                    //                             "1 kg",
+                    //                             style: TextStyle(
+                    //                                 color: colors.blackTemp,
+                    //                                 fontWeight: FontWeight.normal,
+                    //                                 fontSize: 14),
+                    //                           ),
+                    //                         ),
+                    //                         // dropdownColor: colors.primary,
+                    //                         value: catValue.name,
+                    //                         icon: const Padding(
+                    //                           padding: EdgeInsets.only(right: 5),
+                    //                           child: Icon(
+                    //                             Icons.keyboard_arrow_down_rounded,
+                    //                             color: colors.secondary,
+                    //                             size: 30,
+                    //                           ),
+                    //                         ),
+                    //                         // elevation: 16,
+                    //                         style: TextStyle(
+                    //                             color: colors.secondary,
+                    //                             fontWeight: FontWeight.bold),
+                    //                         underline: Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               left: 0, right: 0),
+                    //                           child: Container(
+                    //                             // height: 2,
+                    //                             color: colors.whiteTemp,
+                    //                           ),
+                    //                         ),
+                    //                         onChanged: (String? value) {
+                    //                           // This is called when the user selects an item.
+                    //                           setState(() {
+                    //                             catValue = value!;
+                    //                           });
+                    //                         },
+                    //
+                    //                         items: catValueitems
+                    //                             .map<DropdownMenuItem<String>>(
+                    //                                 (String value) {
+                    //                               return DropdownMenuItem<String>(
+                    //                                 value: value,
+                    //                                 child: Column(
+                    //                                   mainAxisSize: MainAxisSize.min,
+                    //                                   crossAxisAlignment:
+                    //                                   CrossAxisAlignment.start,
+                    //                                   mainAxisAlignment:
+                    //                                   MainAxisAlignment.center,
+                    //                                   children: [
+                    //                                     Padding(
+                    //                                       padding:
+                    //                                       const EdgeInsets.all(4.0),
+                    //                                       child: Text(
+                    //                                         value,
+                    //                                         style: const TextStyle(
+                    //                                             color: colors.textColor,
+                    //                                             fontWeight:
+                    //                                             FontWeight.normal),
+                    //                                       ),
+                    //                                     ),
+                    //                                   ],
+                    //                                 ),
+                    //                               );
+                    //                             }).toList(),
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //           SizedBox(
+                    //             height: 10,
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Expanded(
+                    //             child: Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                       width: 5,
+                    //                     ),
+                    //                     Text(
+                    //                       "Dose",
+                    //                       style: TextStyle(
+                    //                           color: colors.blacktextColor),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //                 Card(
+                    //                   child: Container(
+                    //
+                    //                       height: 50,
+                    //                       width: MediaQuery.of(context).size.width/2,
+                    //                       child: TextFormField(
+                    //
+                    //                         decoration: InputDecoration(
+                    //                           contentPadding: EdgeInsets.only(top: 2,left: 5),
+                    //                             border: InputBorder.none),
+                    //                       )),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //           SizedBox(
+                    //             height: 10,
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     SizedBox(
                       height: 10,
                     ),
@@ -984,4 +1015,18 @@ class _AddSupplementState extends State<AddSupplement> {
             ),
        );
     }
+List<Map<String, dynamic>> supplimentList=[];
+  List <AnimalCatList> catList = [];
+  String? catId;
+  AnimalCatResponse? animalCatResponse;
+  Future<void> getCatApi() async {
+    apiBaseHelper.getAPICall(Uri.parse(ApiService.animalCategory)).then((getData) {
+      bool error = getData ['error'];
+      if(!error){
+        catList = AnimalCatResponse.fromJson(getData).data ?? [];
+        setState(() {});
+      }
+    });
+  }
+
 }
