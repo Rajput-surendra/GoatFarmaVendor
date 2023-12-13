@@ -56,6 +56,7 @@ class _SupplementDueRecordState extends State<SupplementDueRecord> {
                   height: 55,
                   child: Center(
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       // controller: supplementController,
                       decoration: InputDecoration(
                           suffixIcon: Container(

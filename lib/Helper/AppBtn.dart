@@ -21,7 +21,7 @@ class Btn extends StatelessWidget {
       child: Container(
 
         decoration: BoxDecoration(
-          color:Color(0xff002E77),
+          color:Color(0xFF41B328),
     borderRadius: BorderRadius.circular(3)
         ),
         height: 50,

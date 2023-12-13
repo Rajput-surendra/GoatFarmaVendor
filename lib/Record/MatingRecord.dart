@@ -38,10 +38,6 @@ class _MatingRecordState extends State<MatingRecord> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewMating()));
-          //     breed: 'kkk', age: 'ffgggggf', weight: 'sss')));
-
-          // Action to perform when the button is pressed.
-          // For example, navigate to a new screen or show a dialog.
         },
         child: Icon(Icons.add),
         backgroundColor: colors.darkBlue,
@@ -81,13 +77,15 @@ class _MatingRecordState extends State<MatingRecord> {
                     height: 55,
                     child: Center(
                       child: TextFormField(
+                        keyboardType: TextInputType.number,
                         onChanged: (v){
                           getBreedMatingApi(v);
                         },
                         // controller: supplementController,
                         decoration: InputDecoration(
-                            suffixIcon:Container(
-                              padding: EdgeInsets.only(top: 8,left: 5),
+                          contentPadding: EdgeInsets.only(left: 8,top: 18),
+                            suffixIcon:Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Image.asset("assets/images/Group 72309.png"),
                             ),
                             border: InputBorder.none),
@@ -104,26 +102,6 @@ class _MatingRecordState extends State<MatingRecord> {
               ),
 
               SizedBox(height: 10,),
-              InkWell(
-                onTap: (){
-                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>AddWeight(tagid: ,
-                  //   breed: '', age: '', weight: '',)));
-                },
-                child: CustomCard4(
-                  name1: 'Tag ID : F001',
-                  name2: 'Age : ',
-                  name3: 'Days : 6 days',
-                  name4: 'Osmanabad',
-                  name5: 'Weight : ', name6: 'Status : Mated',
-                ),
-              ),
-              CustomCard4(
-                name1: 'Tag ID : F002',
-                name2: 'Age :',
-                name3: 'Days : 125 days',
-                name4: 'Osmanabad',
-                name5: 'Weight :', name6: 'Status : Empty',
-              ),
 
               Container(
                 height: MediaQuery.of(context).size.height,
@@ -136,13 +114,12 @@ class _MatingRecordState extends State<MatingRecord> {
                       },
                     );
                   },
-                  child: matingListModel == null || matingListModel == ""
-                      ? Center(child: CircularProgressIndicator())
+                  child: matingListModel == null || matingListModel == "" ? Center(child: CircularProgressIndicator()) : matingListModel!.data!.isEmpty ? Center(child: Text("No Available Record"))
                       : ListView.builder(
                       itemCount: 1,
                       itemBuilder: (context, i) {
                         return Container(
-                          height: MediaQuery.of(context).size.height / 1.0,
+                          //height: MediaQuery.of(context).size.height / 1.0,
                           child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -181,13 +158,16 @@ class _MatingRecordState extends State<MatingRecord> {
                                                   Text(
                                                       '${getTranslated(context, "Age")}'
                                                           ": "),
-                                                  // Text(
-                                                  //   '${matingListModel!.data![i].age}',
-                                                  //   style: TextStyle(
-                                                  //       color: colors.blackTemp,
-                                                  //       fontWeight:
-                                                  //       FontWeight.bold),
-                                                  // ),
+                                                  matingListModel!.data![i].age == null ? Text("No Available Age",style: TextStyle(
+                                                      color: colors.blackTemp,
+                                                      fontWeight:
+                                                      FontWeight.bold)):  Text(
+                                                    '${matingListModel!.data![i].age}',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
                                                 ],
                                               )
                                             ],
@@ -202,67 +182,75 @@ class _MatingRecordState extends State<MatingRecord> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                      '${getTranslated(context, "DEATH")}'
+                                                      '${getTranslated(context, "DAYS")}'
                                                           ": "),
-                                                  // Text(
-                                                  //   '${matingListModel!.data![i]}',
-                                                  //   style: TextStyle(
-                                                  //       color: colors.blackTemp,
-                                                  //       fontWeight:
-                                                  //       FontWeight.bold),
-                                                  // ),
+                                                  Text(
+                                                    '${matingListModel!.data![i].days} days',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
                                                 ],
                                               ),
                                               Row(
                                                 children: [
                                                   Text(
-                                                      '${getTranslated(context, "GENDER")}'
+                                                      '${getTranslated(context, "STATUS")}'
                                                           ": "),
-                                                  // Text(
-                                                  //   '${matingListModel!.data![i].gander}',
-                                                  //   style: TextStyle(
-                                                  //       color: colors.blackTemp,
-                                                  //       fontWeight:
-                                                  //       FontWeight.bold),
-                                                  // ),
+                                                  Text(
+                                                    '${matingListModel!.data![i].meatingStatus}',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
                                                 ],
                                               )
                                             ],
                                           ),
-                                          // Row(
-                                          //   mainAxisAlignment:
-                                          //   MainAxisAlignment.spaceBetween,
-                                          //   children: [
-                                          //     Row(
-                                          //       children: [
-                                          //         Text(
-                                          //             '${getTranslated(context, "WEIGHT")}'
-                                          //                 ": "),
-                                          //         Text(
-                                          //           '${matingListModel!.data![i].weight}',
-                                          //           style: TextStyle(
-                                          //               color: colors.blackTemp,
-                                          //               fontWeight:
-                                          //               FontWeight.bold),
-                                          //         ),
-                                          //       ],
-                                          //     ),
-                                          //     Row(
-                                          //       children: [
-                                          //         Text(
-                                          //             '${getTranslated(context, "REASON")}'
-                                          //                 ": "),
-                                          //         Text(
-                                          //           '${matingListModel!.data![i].reason}',
-                                          //           style: TextStyle(
-                                          //               color: colors.blackTemp,
-                                          //               fontWeight:
-                                          //               FontWeight.bold),
-                                          //         ),
-                                          //       ],
-                                          //     )
-                                          //   ],
-                                          // ),
+                                          SizedBox(height: 2),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+
+                                              Row(
+                                                children: [
+                                                  // Text(
+                                                  //     '${getTranslated(context, "REASON")}'
+                                                  //         ": "),
+                                                  matingListModel!.data![i].breeding == null ? Text("No available",style: TextStyle(
+                                                      color: colors.blackTemp,
+                                                      fontWeight:
+                                                      FontWeight.bold)):    Text(
+                                                    '${matingListModel!.data![i].breeding}',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                      '${getTranslated(context, "WEIGHT")}'
+                                                          ": "),
+                                                  matingListModel!.data![i].weight == null ? Text("No available weight",style: TextStyle(
+                                                      color: colors.blackTemp,
+                                                      fontWeight:
+                                                      FontWeight.bold)):  Text(
+                                                    '${matingListModel!.data![i].weight}',
+                                                    style: TextStyle(
+                                                        color: colors.blackTemp,
+                                                        fontWeight:
+                                                        FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -285,6 +273,7 @@ class _MatingRecordState extends State<MatingRecord> {
     var parameter = {
       'animal_id':tagId
     };
+    print('______parameter____${parameter}_________');
     apiBaseHelper.postAPICall(Uri.parse(ApiService.getMatingList), parameter).then((getData) {
       String msg = getData['message'];
       setState(() {

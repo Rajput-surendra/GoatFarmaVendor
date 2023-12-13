@@ -47,6 +47,7 @@ class _MedicineConsumeState extends State<MedicineConsume> {
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: textController,
                       decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -222,6 +223,7 @@ class _MedicineConsumeState extends State<MedicineConsume> {
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       controller: textController,
                       decoration: InputDecoration(
                           fillColor: Colors.white,

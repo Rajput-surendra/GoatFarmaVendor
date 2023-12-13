@@ -35,9 +35,8 @@ class _AnimalRecordState extends State<AnimalRecord> {
   animalListApi(String? tagId,filter) async {
     var parameter = {
        "tag_id":tagId,
-      "filter":tagId == ""?filter :""
+       "filter":tagId == ""?filter :""
     };
-    print('_____parameter_____${parameter}_________');
     apiBaseHelper.postAPICall(Uri.parse(ApiService.animalList), parameter).then((getData) {
       bool error = getData['error'];
       String msg = getData['message'];
@@ -75,7 +74,11 @@ class _AnimalRecordState extends State<AnimalRecord> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-           Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewAnimal()));
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewAnimal())).then((value) {
+             if(value != null){
+               animalListApi("" ,"");
+             }
+           });
         },
         child: Icon(Icons.add),
         backgroundColor: colors.darkBlue,
@@ -294,26 +297,26 @@ class _AnimalRecordState extends State<AnimalRecord> {
                             ),
                           ),
 
-                          // InkWell(
-                          //   onTap: () {
-                          //     setState(() {
-                          //       currentindex6 = true;
-                          //       pageChange = 6;
-                          //       if (currentindex6 == true) {
-                          //         currentindex2 = false;
-                          //         currentindex3 = false;
-                          //         currentindex4 = false;
-                          //         currentindex5 = false;
-                          //         currentindex1 = false;
-                          //         currentindex7 = false;
-                          //       }
-                          //     });
-                          //   },
-                          //   child: CustomCard3(
-                          //     title: '${getTranslated(context, "MATTED")}',
-                          //     currentindex: currentindex6,
-                          //   ),
-                          // ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                currentindex7 = true;
+                                pageChange = 7;
+                                if (currentindex7 == true) {
+                                  currentindex2 = false;
+                                  currentindex3 = false;
+                                  currentindex4 = false;
+                                  currentindex5 = false;
+                                  currentindex1 = false;
+                                  currentindex6 = false;
+                                }
+                              });
+                            },
+                            child: CustomCard3(
+                              title: '${getTranslated(context, "MotherHood")}',
+                              currentindex: currentindex7,
+                            ),
+                          ),
 
                         ],
                       ),
@@ -330,15 +333,27 @@ class _AnimalRecordState extends State<AnimalRecord> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "${getTranslated(context, "TOTAL_ANIMAL")}: 05",
+                  animalListModel?.totalAnimals  == null ? Text(
+                    "${getTranslated(context, "TOTAL_ANIMAL")}: 0",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: colors.darkBlue),
+                  ):Text(
+                    "${getTranslated(context, "TOTAL_ANIMAL")}: ${animalListModel?.totalAnimals}",
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: colors.darkBlue),
                   ),
-                  Text(
-                    "${getTranslated(context, "TOTAL_WEIGHT")}: ",
+                  animalListModel?.totalWeight == null ? Text(
+                    "${getTranslated(context, "TOTAL_WEIGHT")}: 0 ",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: colors.darkBlue),
+                  ) : Text(
+                    "${getTranslated(context, "TOTAL_WEIGHT")}: ${animalListModel?.totalWeight}",
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -350,6 +365,7 @@ class _AnimalRecordState extends State<AnimalRecord> {
               Container(
                 child: ListView.builder(
                   shrinkWrap: true,
+                    reverse: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: animalListModel?.data?.length ?? 0,
                     itemBuilder: (c,i){
@@ -372,12 +388,25 @@ class _AnimalRecordState extends State<AnimalRecord> {
                                       Text(" ${animalListModel?.data?[i].tagId}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
                                     ],
                                   ),
-
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text("${getTranslated(context, "AGE" )}" ": ",),
-                                      Text(" ${animalListModel?.data?[i].age}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
+                                      Text("5")
+                                      // Container(
+                                      //     child: Text(" ${animalListModel?.data?[i].age}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,),maxLines: 1,))
+                                    ],
+                                  ),
+                                  SizedBox(height: 5,),
+
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 0),
+                                        child: Text("${getTranslated(context, "STATUS" )}" ": ",),
+                                      ),
+                                      Text("${animalListModel?.data?[i].status}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
                                     ],
                                   ),
 
@@ -387,7 +416,16 @@ class _AnimalRecordState extends State<AnimalRecord> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 0),
+                                        child: Text("${getTranslated(context, "GENDER" )}" ": ",),
+                                      ),
+                                      Text("${animalListModel?.data?[i].gander}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold))
+                                    ],
+                                  ),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -395,78 +433,62 @@ class _AnimalRecordState extends State<AnimalRecord> {
                                         padding: const EdgeInsets.only(left: 0),
                                         child: Text("${getTranslated(context, "WEIGHT" )}" ": ",),
                                       ),
-                                      Text("${animalListModel?.data?[i].weight}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 20),
-                                        child: Text("${getTranslated(context, "GENDER" )}" ": ",),
-                                      ),
-                                      Text("${animalListModel?.data?[i].gander}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold))
+                                      Text("${animalListModel?.data?[i].weight} KG",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
                                     ],
                                   ),
                                 ],
                               ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //
+                              //
+                              //     Row(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         Padding(
+                              //           padding: const EdgeInsets.only(left: 20),
+                              //           child: Text("${getTranslated(context, "GENDER" )}" ": ",),
+                              //         ),
+                              //         Text("${animalListModel?.data?[i].gander}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold))
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
                               SizedBox(height: 2,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Padding(
-                                      //   padding: const EdgeInsets.only(left: 0),
-                                      //   child: Text("Weight :"),
-                                      // ),
-                                      Text("${animalListModel?.data?[i].procurement}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Padding(
-                                      //   padding: const EdgeInsets.only(left: 20),
-                                      //   child: Text("Status :"),
-                                      // ),
-                                      Text("${animalListModel?.data?[i].deliveryDate}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold))
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //
+                              //     Row(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         // Padding(
+                              //         //   padding: const EdgeInsets.only(left: 0),
+                              //         //   child: Text("Weight :"),
+                              //         // ),
+                              //         Text("${animalListModel?.data?[i].procurement}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),)
+                              //       ],
+                              //     ),
+                              //     Row(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         // Padding(
+                              //         //   padding: const EdgeInsets.only(left: 20),
+                              //         //   child: Text("Status :"),
+                              //         // ),
+                              //         Text("${animalListModel?.data?[i].deliveryDate}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold))
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
                       );
                     }),
               ),
-              // pageChange == 1
-              //     ? Container(
-              //   child: SingleChildScrollView(
-              //     child: Column(
-              //       children: [
-              //         CustomCard4(
-              //             name1: "${getTranslated(context, "TAG_ID")}: F001",
-              //             name2: "${getTranslated(context, "AGE")}:12",
-              //             name3: "${getTranslated(context, "FEMALE")}",
-              //             name4: "Osmanabad",
-              //             name5: "${getTranslated(context, "WEIGHT")}:48",
-              //             name6: "${getTranslated(context, "STATUS")}:Empty"),
-              //
-              //       ],
-              //     ),
-              //   ),
-              // )
-              //     : Container(),
-              // pageChange == 2 ? Text("Page 2") : Container(),
-              // pageChange == 3 ? Text("Page 3") : Container(),
-              // pageChange == 4 ? Text("Page 4") : Container(),
-              // pageChange == 5 ? Text("Page 5") : Container(),
-              // pageChange == 6 ? Text("Page 6") : Container(),
-              // pageChange == 7 ? Text("Page 7") : Container(),
+
             ],
           ),
         ),

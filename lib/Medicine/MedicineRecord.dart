@@ -70,6 +70,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
                 borderRadius: BorderRadius.circular(4.0),
               ),
               child: TextFormField(
+                keyboardType: TextInputType.number,
                 // controller: supplementController,
                 decoration: InputDecoration(
                     suffixIcon:Container(

@@ -58,6 +58,7 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
                 borderRadius: BorderRadius.circular(4.0),
               ),
               child:TextFormField(
+                keyboardType: TextInputType.number,
                 textAlign: TextAlign.start,
                 // controller: supplementController,
                 decoration: InputDecoration(

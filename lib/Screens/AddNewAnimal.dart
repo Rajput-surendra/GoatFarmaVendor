@@ -14,6 +14,7 @@ import '../ApiPath/Api.dart';
 import '../Helper/AppBtn.dart';
 import '../Helper/CustomText.dart';
 import '../Helper/session.dart';
+import '../Model/Animal/get_animal_list_model.dart';
 import '../Model/animal_cat_model_response.dart';
 import '../Model/breed_list_model.dart';
 import '../Record/AnimalRecord.dart';
@@ -22,13 +23,17 @@ import '../Utils/Colors.dart';
 import '../helper/appbar.dart';
 
 class AddNewAnimal extends StatefulWidget {
-   AddNewAnimal({Key? key,}) : super(key: key);
+
+  AddNewAnimal({Key? key,this.isValue}) : super(key: key);
+
+  final  bool? isValue ;
 
   @override
   State<AddNewAnimal> createState() => _AddNewAnimalState();
 }
 
 class _AddNewAnimalState extends State<AddNewAnimal> {
+
 
   String _btn='Breeder';
   String _btn2='yes';
@@ -42,6 +47,9 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
   String? userType;
   String? breed;
   String?gender;
+  String?kidsGender;
+  String?status;
+  String?statusFemale;
   String? born;
   TextEditingController brithDateCtr = TextEditingController();
   TextEditingController brithWeightCtr = TextEditingController();
@@ -63,60 +71,22 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
   String? selectedDeliveryDate;
   File? image;
 
-  Future<void> _showImageSourceDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Choose Image Source'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                pickImage(ImageSource.gallery);
-              },
-              child: Text('Gallery'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                pickImage(ImageSource.camera);
-              },
-              child: Text('Camera'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-  Future<void> pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: source,
-      imageQuality: 50, // You can adjust the image quality here
-    );
 
-    if (pickedFile != null) {
-      setState(() {
-        selectedImage = File(pickedFile.path) ;
-        selectedImageList.add(selectedImage ?? File(''));
-      });
-    }
-  }
 
    @override
   void initState() {
     // TODO: implement initState
     super.initState();
     animalCatApi();
-    breedListApi();
     getDataProfile();
     getRandomNumber();
+
   }
 
    getRandomNumber(){
      Random random = Random();
      randomNumber = random.nextInt(10000) - 1;
-    animalNameCtr.text = randomNumber.toString() ;
+   // animalNameCtr.text = randomNumber.toString() ;
   }
   int? randomNumber ;
 
@@ -129,6 +99,83 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
 
     });
 
+  }
+
+
+  Future<bool> showExitPopup() async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          title: Center(child: Text('Select Image')),
+          content: Row(
+            // crossAxisAlignment: CrossAxisAlignment.s,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                onTap: (){
+                  getImage(ImageSource.camera, context, 1);
+                },
+                child: Container(
+                  height: 40,width: 80,
+                  decoration: BoxDecoration(
+                      color: colors.secondary,
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                  child: Center(child: Text("Camera")),
+                ),
+              ),
+
+              SizedBox(
+                width: 15,
+              ),
+
+              InkWell(
+                onTap: (){
+                  getImageCmera(ImageSource.gallery,context,1);
+                },
+                child: Container(
+                  height: 40,width: 80,
+                  decoration: BoxDecoration(
+                      color: colors.secondary,
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+
+                  child: Center(child: Text("Gallery")),
+                ),
+              )
+              // ElevatedButton(
+              //   onPressed: () {
+              //
+              //   },
+              //   child: Text('Gallery'),
+              // ),
+            ],
+          )),
+    ) ; //if showDialouge had returned null, then return false
+  }
+
+  bool isEditProfile = false ;
+  File? imageFile;
+  Future getImage(ImageSource source, BuildContext context, int i) async {
+    var image = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 50
+    );
+    setState(() {
+      imageFile = File(image!.path);
+    });
+
+    Navigator.pop(context);
+  }
+  Future getImageCmera(ImageSource source, BuildContext context, int i) async {
+    var image = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 50
+    );
+    setState(() {
+      imageFile = File(image!.path);
+    });
+    Navigator.pop(context);
   }
   @override
   Widget build(BuildContext context) {
@@ -163,10 +210,10 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
                                 child: DropdownButton2<AnimalCatList>(
                                   hint:  Text(getTranslated(context, "SELECT_CATE"),
                                     style: TextStyle(
-                                        color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
+                                        color: colors.black54,fontSize:12
                                     ),),
                                   value: animalCat,
-                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.black54,size: 25,),
+                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 25,),
                                   style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
                                   underline: Padding(
                                     padding: const EdgeInsets.only(left: 0,right: 0),
@@ -180,8 +227,7 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
                                     setState(() {
                                       animalCat = value!;
                                       catId =  animalCat?.id;
-
-                                      //animalCountApi(animalCat!.id);
+                                      breedListApi(catId!);
                                     });
                                   },
                                   items: animalCatResponse?.data?.map((items) {
@@ -227,13 +273,13 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
                             child: Padding(
                               padding: const EdgeInsets.all(0.0),
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton2<BreedDataList>(
+                                child: DropdownButton2<BreedCatList>(
                                   hint:  Text(getTranslated(context, "BREED"),
                                     style: TextStyle(
-                                        color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
+                                        color: colors.black54,fontSize:12
                                     ),),
                                   value: animalBreed,
-                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.black54,size: 25,),
+                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 25,),
                                   style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
                                   underline: Padding(
                                     padding: const EdgeInsets.only(left: 0,right: 0),
@@ -242,7 +288,7 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
                                       color:  colors.whiteTemp,
                                     ),
                                   ),
-                                  onChanged: (BreedDataList? value) {
+                                  onChanged: (BreedCatList? value) {
                                     setState(() {
                                       animalBreed = value!;
                                       breedId =  animalBreed?.id;
@@ -261,7 +307,7 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
 
                                                 child: Padding(
                                                   padding: const EdgeInsets.only(top: 0),
-                                                  child: Text(items.parent.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
+                                                  child: Text(items.name.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
                                                 )),
                                           ),
 
@@ -281,603 +327,190 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
                   ],
                 ),
                 SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "TAG_ID")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                readOnly: true,
-                                controller: animalNameCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  prefix: Text("GOTN",style: TextStyle(color: colors.blackTemp),),
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-                                validator: (value){
-                                  if(value==null||value.isEmpty)
-                                    return "Please enter tagId";
-                                  return null;
-                                },
+                Custom_Text(text: '${getTranslated(context, "TAG_ID")}'),
+
+                SizedBox(
+                  width: MediaQuery.of(context).size.width/1.1,
+                  child: Card(
+                    child: Container(
+                      height: 50,
+                      child: Center(
+                        child: TextFormField(
+                          controller:  animalNameCtr,
+                          decoration: InputDecoration(
+                              hintText: "${getTranslated(context, "TAG_ID")}",
+                              suffixIcon: Container(
+                                padding: EdgeInsets.all(10),
+                                child: InkWell(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanPay())).then((value){
+                                        if(value != null){
+                                          animalNameCtr.text=  value;
+                                        }
+                                      });;
+                                    },
+                                    child: Image.asset("assets/images/Group 72309.png")),
                               ),
-                            )
+                              contentPadding: EdgeInsets.only(left: 10,top: 15),
+                              border: InputBorder.none),
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please Enter 2nd onwards';
+                          //   }
+                          //   return null;
+                          // },
                         ),
-                      ],
+                      ),
                     ),
-                    SizedBox(width: 5,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "GENDER")}'),
-                        SizedBox(height: 8,),
-                        Container(
-                          width: MediaQuery.of(context).size.width/2.3,
-                          color: Colors.white,
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value:gender,
-                            //elevation: 5,
-                            style: TextStyle(color: Colors.black87),
-
-                            items: <String>[
-                              '${getTranslated(context, "MALE")}',
-                              '${getTranslated(context, "FEMALE")}',
-                              '${getTranslated(context, "OTHER")}'
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            icon: Icon(Icons.keyboard_arrow_down),
-                            hint: Text(
-                              "${getTranslated(context, "GENDER")}",
-                            ),
-                            onChanged: (String? value)  {
-                              setState(() {
-                                gender = value!;
-                              });
-                            },
-
-                            underline: Container(  // Use a container with zero height to remove the underline
-                              height: 0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
+                // Row(
+                //   children: [
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //
+                //         SizedBox(height: 8,),
+                //         GestureDetector(
+                //             child: Container(
+                //               width: MediaQuery.of(context).size.width/1.15,
+                //               color: Colors.white,
+                //               child:  TextFormField(
+                //
+                //                 controller: animalNameCtr,
+                //                 decoration: InputDecoration(
+                //                   //prefix: Text(,style: TextStyle(color: colors.blackTemp),),
+                //                   border:InputBorder.none,
+                //                   contentPadding: EdgeInsets.all(10),
+                //                   // border: OutlineInputBorder(
+                //                   //     borderRadius: BorderRadius.circular(10)),
+                //                 ),
+                //                 validator: (value){
+                //                   if(value==null||value.isEmpty)
+                //                     return "Please enter tagId";
+                //                   return null;
+                //                 },
+                //               ),
+                //             )
+                //         ),
+                //       ],
+                //     ),
+                //     SizedBox(width: 5,height: 20,),
+                //
+                //   ],
+                // ),
                 SizedBox(height: 15,),
+
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Custom_Text(text: '${getTranslated(context, "PROCUREMENT")}'),
-                    SizedBox(height: 8,),
+                    Text('${getTranslated(context, "PROCUREMENT")}',style: TextStyle(color: colors.black54),),
+                    SizedBox(height: 5,),
                     Container(
-                      // width: MediaQuery.of(context).size.width/2.3,
-                      color: Colors.white,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        value:born,
-                        //elevation: 5,
-                        style: TextStyle(color: Colors.black87),
+                      decoration: BoxDecoration(
+                          color: colors.whiteTemp
+                      ),
+                      width: double.infinity,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          //dropdownMaxHeight: 300,
+                          hint: Text("Select",
+                            style: TextStyle(
+                                color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                            ),),
+                          // dropdownColor: colors.primary,
+                          value: born,
+                          icon:  const Padding(
+                            padding: EdgeInsets.only(bottom: 0,left: 10),
+                            child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.secondary,size: 30,),
+                          ),
+                          // elevation: 16,
+                          style:  TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                          underline: Container(
+                            // height: 2,
+                            color:  colors.whiteTemp,
+                          ),
+                          onChanged: (String? value) {
+                            // This is called when the user selects an item.
+                            setState(() {
+                              born = value!;
 
-                        items: <String>[
-                          'Born at Farm',
-                          'Born another place'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        hint: Text(
-                          "Where Born",
+                            });
+                          },
+                          items: ['Born at Farm','Purchase']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+
+                              child:
+                              Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                            );
+
+                          }).toList(),
+
                         ),
-                        onChanged: (String? value)  {
-                          setState(() {
-                            born = value!;
-                          });
-                        },
 
-                        underline: Container(  // Use a container with zero height to remove the underline
-                          height: 0,
-                          color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    getViewBasedOnSelectedValue(),
+
+                  ],
+                ),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Custom_Text(text: '${getTranslated(context, "PHOTO")}'),
+                    SizedBox(height: 8,),
+                    InkWell(
+                      onTap: (){
+                        showExitPopup();
+                      },
+                      child: Container(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width/1.1,
+                        // height: ,
+                        color: colors.primary,
+                        child:  GestureDetector(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+
+                              if(imageFile==null)
+                                Center(child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('${getTranslated(context, "IMAGE")}',style: TextStyle(color: colors.whiteTemp),),
+                                ))
+                              else if(imageFile != null)
+                                Container(
+                                  height: 80,
+                                 width: MediaQuery.of(context).size.width/1.2,
+                                  child: ClipRRect(
+                                      clipBehavior: Clip.antiAlias,
+                                      borderRadius: BorderRadius.circular(1),
+                                      child: Image.file(imageFile ?? File(''),fit: BoxFit.fill)
+                                  ),
+                                ),
+
+                            ],
+                          ),
                         ),
                       ),
                     )
                   ],
                 ),
+
                 SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "BIRTH_DATE")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            onTap: () async {
-                              DateTime? datePicked = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2024));
-                              if (datePicked != null) {
-                                print(
-                                    'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                String formettedDate =
-                                DateFormat('dd-MM-yyyy').format(datePicked);
-                                setState(() {
-                                  selectedBirthDate = formettedDate;
-                                });
-                              }
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                readOnly: true,
-                                onTap:
-                                    () async{
-                                  DateTime? datePicked = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2024));
-                                  if (datePicked != null) {
-                                    print(
-                                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                    String formettedDate =
-                                    DateFormat('dd-MM-yyyy').format(datePicked);
-                                    setState(() {
-                                      selectedBirthDate = formettedDate;
-                                      brithDateCtr.text = formettedDate;
-                                    });
-                                  }
-                                },
-                                controller: brithDateCtr,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  hintText: 'dd-mm-yyyy',
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-                                validator: (value){
-                                  if(value==null||value.isEmpty)
-                                    return "Please enter birth date";
-                                  return null;
-                                },
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 5,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "BIRTH_WEIGHT")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                controller: brithWeightCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-                                validator: (value){
-                                  if(value==null||value.isEmpty)
-                                    return "Please enter birth weight";
-                                  return null;
-                                },
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "MOTHER_ID")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                controller: motherCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
 
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 5,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context,"FATHER_ID")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                controller: fatherCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "PURCHASE_DATE")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            onTap: () async {
-                              DateTime? datePicked = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2024));
-                              if (datePicked != null) {
-                                print(
-                                    'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                String formettedDate =
-                                DateFormat('dd-MM-yyyy').format(datePicked);
-                                setState(() {
-                                  selectedPurchaseDate = formettedDate;
-                                });
-                              }
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                          readOnly: true,
-                                onTap:
-                                    () async{
-                                  DateTime? datePicked = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2024));
-                                  if (datePicked != null) {
-                                    print(
-                                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                    String formettedDate =
-                                    DateFormat('dd-MM-yyyy').format(datePicked);
-                                    setState(() {
-                                      selectedPurchaseDate= formettedDate;
-                                      purchaseDateCtr.text = formettedDate;
-                                    });
-                                  }
-                                },
-                                controller: purchaseDateCtr,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  hintText: 'dd-mm-yyyy',
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 5,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "AGE")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                controller: ageCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-                                validator: (value){
-                                  if(value==null||value.isEmpty)
-                                    return "Please enter age";
-                                  return null;
-                                },
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "WEIGHT")}'),
-                        SizedBox(height: 8,),
-                        GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width/2.3,
-                              color: Colors.white,
-                              child:  TextFormField(
-                                controller: weightCtr,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border:InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  // border: OutlineInputBorder(
-                                  //     borderRadius: BorderRadius.circular(10)),
-                                ),
-                                validator: (value){
-                                  if(value==null||value.isEmpty)
-                                    return "Please enter weight";
-                                  return null;
-                                },
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 5,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Custom_Text(text: '${getTranslated(context, "PHOTO")}'),
-                        SizedBox(height: 8,),
-                        Container(
-                          width: MediaQuery.of(context).size.width/2.3,
-                          // height: ,
-                          color: Colors.white,
-                          child:  GestureDetector(
-                            onTap:(){ _showImageSourceDialog(context);},
-                            child: Padding(padding: EdgeInsets.only(top: 15,right: 8,bottom: 15,left: 15),
-
-                                child:Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-
-                                    if(selectedImage==null)
-                                      Text('${getTranslated(context, "IMAGE")}')
-                                    else if(selectedImage != null)
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width/2.8,
-                                        child: Text('$selectedImage',overflow: TextOverflow.ellipsis,),),
-
-                                  ],
-                                )
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Custom_Text(text: '${getTranslated(context, "IF_PREGNANT_:_EXPECTED_DELIVERY_DUE_DATE")}'),
-                    SizedBox(height: 8,),
-                    GestureDetector(
-                        onTap: () async {
-                          DateTime? datePicked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2024));
-                          if (datePicked != null) {
-                            print(
-                                'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                            String formettedDate =
-                            DateFormat('dd-MM-yyyy').format(datePicked);
-                            setState(() {
-                              selectedDeliveryDate = formettedDate;
-
-                            });
-                          }
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width/2.3,
-                          color: Colors.white,
-                          child:  TextFormField(
-                                 readOnly: true,
-                            onTap:
-                                () async{
-                              DateTime? datePicked = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2024));
-                              if (datePicked != null) {
-                                print(
-                                    'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                String formettedDate =
-                                DateFormat('dd-MM-yyyy').format(datePicked);
-                                setState(() {
-                                  selectedDeliveryDate= formettedDate;
-                                  selectDeliveryDateCtr.text =  formettedDate;
-                                });
-                              }
-                            },
-                            controller: selectDeliveryDateCtr,
-                            decoration: InputDecoration(
-                              border:InputBorder.none,
-                              contentPadding: EdgeInsets.all(10),
-                              hintText: 'dd-mm-yyyy',
-                              // border: OutlineInputBorder(
-                              //     borderRadius: BorderRadius.circular(10)),
-                            ),
-                            validator: (value){
-                              if(value==null||value.isEmpty)
-                                return "Please Enter delivery Date";
-                              return null;
-                            },
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Text('${getTranslated(context, "IF_MALE_SELECT_TYPE")}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Radio(value: value, groupValue: groupValue, onChanged: onChanged)
-                    Row(
-                      children: [
-                        Radio(value:'${getTranslated(context, "BREEDER")}', groupValue: _btn,
-
-                            activeColor: (breederIndex==1)?Color(0xff002E77):Colors.grey,
-                            fillColor: MaterialStateColor.resolveWith((states) => (breederIndex==1)?Color(0xff002E77):Colors.grey ),
-                            onChanged:(value){
-                              setState(() {
-                                _btn=value.toString();
-                                breederIndex=1;
-                                kurbaniIndex=0;
-                                cuttingIndex=0;
-                              });
-                            }),
-                        Text('${getTranslated(context, "BREEDER")}',style: TextStyle(color:(breederIndex==1)?Color(0xff002E77):Colors.grey ),)
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio(value:'${getTranslated(context, "KURBANI")}', groupValue: _btn,
-
-                            activeColor: (kurbaniIndex==1)?Color(0xff002E77):Colors.grey,
-                            fillColor: MaterialStateColor.resolveWith((states) => (kurbaniIndex==1)?Color(0xff002E77):Colors.grey ),
-                            onChanged:(value){
-                              setState(() {
-
-                                _btn=value.toString();
-                                breederIndex=0;
-                                kurbaniIndex=1;
-                                cuttingIndex=0;
-                              });
-                            }),
-                        Text('${getTranslated(context, "KURBANI")}',style: TextStyle(color:(kurbaniIndex==1)?Color(0xff002E77):Colors.grey ),)
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio(value:'${getTranslated(context, "CUTTING")}', groupValue: _btn,
-                            activeColor: Color(0xff002E77),
-                            fillColor: MaterialStateColor.resolveWith((states) => (cuttingIndex==1)?Color(0xff002E77):Colors.grey ),
-                            onChanged:(value){
-                              setState(() {
-                                _btn=value.toString();
-                                kurbaniIndex=0;
-                                breederIndex=0;
-                                cuttingIndex=1;
-                              });
-                            }),
-                        Text('${getTranslated(context, "CUTTING")}',style: TextStyle(color:(cuttingIndex==1)?Color(0xff002E77):Colors.grey ) ),
-                      ],
-                    ),
-                  ],
-                ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 1,color: Colors.grey,),
                 SizedBox(height: 15
                   ,),
                 Text('${getTranslated(context, "READY_FOR_SALE")}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
-               /* Row(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Radio(value:'${getTranslated(context, "YES")}', groupValue: _btn2,
-
-                            activeColor: (yesIndex==1)?Color(0xff002E77):Colors.grey ,
-                            fillColor: MaterialStateColor.resolveWith((states) =>(yesIndex==1)?Color(0xff002E77):Colors.grey ),
-                            onChanged:(value){
-                              setState(() {
-                                _btn2=value.toString();
-                                yesIndex=1;
-                                noIndex=0;
-                              });
-                            }),
-                        Text('${getTranslated(context, "YES")}',style: TextStyle(color:(kurbaniIndex==1)?Color(0xff002E77):Colors.grey  ),)
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Radio(value:'${getTranslated(context, "NO")}', groupValue: _btn2,
-
-                            activeColor:(noIndex==1)?Color(0xff002E77):Colors.grey ,
-                            fillColor: MaterialStateColor.resolveWith((states) => (noIndex==1)?Color(0xff002E77):Colors.grey ),
-                            onChanged:(value){
-                              setState(() {
-                                _btn2=value.toString();
-                                noIndex=1;
-                                yesIndex=0;
-                              });
-                            }),
-                        Text('${getTranslated(context, "NO")}',style: TextStyle(color:(noIndex==1)?Color(0xff002E77):Colors.grey ),)
-                      ],
-                    ),
-                  ],
-                ),*/
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -986,6 +619,695 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
     );
   }
 
+  Widget getViewBasedOnSelectedValue() {
+    switch (born) {
+      case 'Born at Farm':
+        return artificialView();
+      case 'Purchase':
+        return naturalView();
+      default:
+        return Container();
+    }
+  }
+  artificialView(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "GENDER")}'),
+                SizedBox(height: 5,),
+                Container(
+                  // height: 50,
+                  decoration: BoxDecoration(
+                      color: colors.whiteTemp
+                  ),
+                  width: MediaQuery.of(context).size.width/2.3,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      //dropdownMaxHeight: 300,
+                      hint: Text("Select",
+                        style: TextStyle(
+                            color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                        ),),
+                      // dropdownColor: colors.primary,
+                      value: kidsGender,
+                      icon:  const Padding(
+                        padding: EdgeInsets.only(bottom: 0,left: 10),
+                        child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.secondary,size: 30,),
+                      ),
+                      // elevation: 16,
+                      style:  TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                      underline: Container(
+                        // height: 2,
+                        color:  colors.whiteTemp,
+                      ),
+                      onChanged: (String? value) {
+                        // This is called when the user selects an item.
+                        setState(() {
+                          kidsGender = value!;
+                        });
+                      },
+                      items: ['Male','Female']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+
+                          child:
+                          Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                        );
+
+                      }).toList(),
+
+                    ),
+
+                  ),
+                ),
+                SizedBox(height: 10,),
+              ],
+            ),
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Custom_Text(text: '${getTranslated(context, "STATUS")}'),
+              SizedBox(height: 5,),
+              Container(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width/2.3,
+                  color: Colors.white,
+                  child:  Padding(
+                    padding: const EdgeInsets.only(top: 18,left: 5),
+                    child: Text("Kids"),
+                  )
+              ),
+              SizedBox(height: 10,),
+
+            ],
+          )
+
+          ],
+        ),
+
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "BIRTH_DATE")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    onTap: () async {
+                      DateTime? datePicked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2024));
+                      if (datePicked != null) {
+                        print(
+                            'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                        String formettedDate =
+                        DateFormat('dd-MM-yyyy').format(datePicked);
+                        setState(() {
+                          selectedBirthDate = formettedDate;
+
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        readOnly: true,
+                        onTap:
+                            () async{
+                          DateTime? datePicked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2024));
+                          if (datePicked != null) {
+                            print(
+                                'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                            String formettedDate =
+                            DateFormat('dd-MM-yyyy').format(datePicked);
+                            setState(() {
+                              selectedBirthDate = formettedDate;
+                              brithDateCtr.text = formettedDate;
+                              getDateApi(selectedBirthDate!);
+                            });
+                          }
+                        },
+                        controller: brithDateCtr,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          hintText: 'dd-mm-yyyy',
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+                        validator: (value){
+                          if(value==null||value.isEmpty)
+                            return "Please enter birth date";
+                          return null;
+                        },
+                      ),
+                    )
+                ),
+
+              ],
+            ),
+            SizedBox(width: 5,),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "BIRTH_WEIGHT")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        controller: brithWeightCtr,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+                        validator: (value){
+                          if(value==null||value.isEmpty)
+                            return "Please enter birth weight";
+                          return null;
+                        },
+                      ),
+                    )
+                ),
+              ],
+            ),
+            SizedBox(height: 10,)
+
+
+          ],
+        ),
+        SizedBox(height: 15,),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Custom_Text(text: '${getTranslated(context, "AGE")}'),
+            SizedBox(height: 8,),
+            GestureDetector(
+                child: Container(
+                  width:double.infinity,
+                  color: Colors.white,
+                  child:  TextFormField(
+                    readOnly: true,
+                    controller: ageCtr,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border:InputBorder.none,
+                      contentPadding: EdgeInsets.all(10),
+                      // border: OutlineInputBorder(
+                      //     borderRadius: BorderRadius.circular(10)),
+                    ),
+                    validator: (value){
+                      if(value==null||value.isEmpty)
+                        return "Please enter age";
+                      return null;
+                    },
+                  ),
+                )
+            ),
+          ],
+        ),
+        SizedBox(height: 10,),
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "MOTHER_ID")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        controller: motherCtr,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+
+                      ),
+                    )
+                ),
+              ],
+            ),
+            SizedBox(width: 5,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context,"FATHER_ID")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        controller: fatherCtr,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+
+                      ),
+                    )
+                ),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: 15,),
+
+      ],
+    );
+  }
+  naturalView(){
+    return Column(
+     crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+         Row(
+           children: [
+             Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text('${getTranslated(context, "GENDER")}',style: TextStyle(color: colors.black54),),
+                 SizedBox(height: 5,),
+                 Container(
+                   // height: 50,
+                   decoration: BoxDecoration(
+                       color: colors.whiteTemp
+                   ),
+                   width: MediaQuery.of(context).size.width/2.3,
+                   child: DropdownButtonHideUnderline(
+                     child: DropdownButton2<String>(
+                       //dropdownMaxHeight: 300,
+                       hint: Text("Select",
+                         style: TextStyle(
+                             color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                         ),),
+                       // dropdownColor: colors.primary,
+                       value: gender,
+                       icon:  const Padding(
+                         padding: EdgeInsets.only(bottom: 0,left: 10),
+                         child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.secondary,size: 30,),
+                       ),
+                       // elevation: 16,
+                       style:  TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                       underline: Container(
+                         // height: 2,
+                         color:  colors.whiteTemp,
+                       ),
+                       onChanged: (String? value) {
+                         // This is called when the user selects an item.
+                         setState(() {
+                           gender = value!;
+                         });
+                       },
+                       items: ['Male','Female']
+                           .map<DropdownMenuItem<String>>((String value) {
+                         return DropdownMenuItem<String>(
+                           value: value,
+
+                           child:
+                           Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                         );
+
+                       }).toList(),
+
+                     ),
+
+                   ),
+                 ),
+               ],
+             ),
+             SizedBox(width: 5,),
+             selectMale(),
+           ],
+         ),
+
+        SizedBox(height: 15,),
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "PURCHASE_DATE")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    onTap: () async {
+                      DateTime? datePicked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2024));
+                      if (datePicked != null) {
+                        print(
+                            'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                        String formettedDate =
+                        DateFormat('dd-MM-yyyy').format(datePicked);
+                        setState(() {
+                          selectedPurchaseDate = formettedDate;
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        readOnly: true,
+                        onTap:
+                            () async{
+                          DateTime? datePicked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2024));
+                          if (datePicked != null) {
+                            print(
+                                'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                            String formettedDate =
+                            DateFormat('dd-MM-yyyy').format(datePicked);
+                            setState(() {
+                              selectedPurchaseDate= formettedDate;
+                              purchaseDateCtr.text = formettedDate;
+                            });
+                          }
+                        },
+                        controller: purchaseDateCtr,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          hintText: 'dd-mm-yyyy',
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+
+                      ),
+                    )
+                ),
+              ],
+            ),
+            SizedBox(width: 5,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Custom_Text(text: '${getTranslated(context, "WEIGHT")}'),
+                SizedBox(height: 8,),
+                GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2.3,
+                      color: Colors.white,
+                      child:  TextFormField(
+                        controller: weightCtr,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border:InputBorder.none,
+                          contentPadding: EdgeInsets.all(10),
+                          // border: OutlineInputBorder(
+                          //     borderRadius: BorderRadius.circular(10)),
+                        ),
+                        validator: (value){
+                          if(value==null||value.isEmpty)
+                            return "Please enter weight";
+                          return null;
+                        },
+                      ),
+                    )
+                ),
+              ],
+            ),
+
+          ],
+        ),
+        SizedBox(height: 10,),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Custom_Text(text: '${getTranslated(context, "BIRTH_DATE")}'),
+            SizedBox(height: 8,),
+            GestureDetector(
+                onTap: () async {
+                  DateTime? datePicked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2024));
+                  if (datePicked != null) {
+                    print(
+                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                    String formettedDate =
+                    DateFormat('dd-MM-yyyy').format(datePicked);
+                    setState(() {
+                      selectedBirthDate = formettedDate;
+
+                    });
+                  }
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width/2.3,
+                  color: Colors.white,
+                  child:  TextFormField(
+                    readOnly: true,
+                    onTap:
+                        () async{
+                      DateTime? datePicked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2024));
+                      if (datePicked != null) {
+                        print(
+                            'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                        String formettedDate =
+                        DateFormat('dd-MM-yyyy').format(datePicked);
+                        setState(() {
+                          selectedBirthDate = formettedDate;
+                          brithDateCtr.text = formettedDate;
+                          getDateApi(selectedBirthDate!);
+                        });
+                      }
+                    },
+                    controller: brithDateCtr,
+                    decoration: InputDecoration(
+                      border:InputBorder.none,
+                      contentPadding: EdgeInsets.all(10),
+                      hintText: 'dd-mm-yyyy',
+                      // border: OutlineInputBorder(
+                      //     borderRadius: BorderRadius.circular(10)),
+                    ),
+                    validator: (value){
+                      if(value==null||value.isEmpty)
+                        return "Please enter birth date";
+                      return null;
+                    },
+                  ),
+                )
+            ),
+
+          ],
+        ),
+        SizedBox(width: 10,),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Custom_Text(text: '${getTranslated(context, "AGE")}'),
+            SizedBox(height: 8,),
+            GestureDetector(
+                child: Container(
+                  width:double.infinity,
+                  color: Colors.white,
+                  child:  TextFormField(
+                    readOnly: true,
+                    controller: ageCtr,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border:InputBorder.none,
+                      contentPadding: EdgeInsets.all(10),
+                      // border: OutlineInputBorder(
+                      //     borderRadius: BorderRadius.circular(10)),
+                    ),
+                    validator: (value){
+                      if(value==null||value.isEmpty)
+                        return "Please enter age";
+                      return null;
+                    },
+                  ),
+                )
+            ),
+          ],
+        ),
+        SizedBox(height: 10,),
+
+      ],
+    );
+
+  }
+
+
+  Widget selectMale() {
+    switch (gender) {
+      case 'Male':
+        return maleView();
+      case 'Female':
+        return feMaleView();
+      default:
+        return Container();
+    }
+  }
+  maleView(){
+    return Column(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${getTranslated(context, "STATUS")}',style: TextStyle(color: colors.black54),),
+                SizedBox(height: 5,),
+                Container(
+                  // height: 50,
+                  decoration: BoxDecoration(
+                      color: colors.whiteTemp
+                  ),
+                  width: MediaQuery.of(context).size.width/2.3,
+                  ///width: MediaQuery.of(context).size.width/2.3,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      //dropdownMaxHeight: 300,
+                      hint: Text("Select Status",
+                        style: TextStyle(
+                            color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                        ),),
+                      // dropdownColor: colors.primary,
+                      value: status,
+                      icon:  const Padding(
+                        padding: EdgeInsets.only(bottom: 0,left: 10),
+                        child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.secondary,size: 30,),
+                      ),
+                      // elevation: 16,
+                      style:  TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                      underline: Container(
+                        // height: 2,
+                        color:  colors.whiteTemp,
+                      ),
+                      onChanged: (String? value) {
+                        // This is called when the user selects an item.
+                        setState(() {
+                          status = value!;
+                        });
+                      },
+                      items: ['Kids','Grower','Breeder']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+
+                          child:
+                          Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                        );
+
+                      }).toList(),
+
+                    ),
+
+                  ),
+                ),
+
+
+
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+  feMaleView(){
+    return Column(
+     crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${getTranslated(context, "STATUS")}',style: TextStyle(color: colors.black54),),
+            SizedBox(height: 5,),
+            Container(
+              // height: 50,
+              decoration: BoxDecoration(
+                  color: colors.whiteTemp
+              ),
+              width: MediaQuery.of(context).size.width/2.3,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2<String>(
+                  //dropdownMaxHeight: 300,
+                  hint: Text("Select",
+                    style: TextStyle(
+                        color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                    ),),
+                  // dropdownColor: colors.primary,
+                  value: statusFemale,
+                  icon:  const Padding(
+                    padding: EdgeInsets.only(bottom: 0,left: 10),
+                    child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.secondary,size: 30,),
+                  ),
+                  // elevation: 16,
+                  style:  TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                  underline: Container(
+                    // height: 2,
+                    color:  colors.whiteTemp,
+                  ),
+                  onChanged: (String? value) {
+                    // This is called when the user selects an item.
+                    setState(() {
+                      statusFemale = value!;
+                    });
+                  },
+                  items: ['Kids','Grower','Empty','Matted','Pregnant','Motherhood']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                    );
+
+                  }).toList(),
+
+                ),
+
+              ),
+            ),
+
+
+
+          ],
+        ),
+      ],
+    );
+
+  }
+
+
+
   String? catId;
   AnimalCatList? animalCat;
   AnimalCatResponse? animalCatResponse;
@@ -1007,60 +1329,88 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
 
 
   String? breedId;
-  BreedDataList? animalBreed;
-  BreedListModel? breedListModel;
-  Future<void> breedListApi() async {
-    apiBaseHelper.getAPICall(Uri.parse(ApiService.breedList)).then((getData) {
+  BreedCatList? animalBreed;
+  GetSubListBreedModel? breedListModel;
+
+  Future<void> breedListApi(String animalId) async {
+
+    var parameter = {
+      'parent_id': animalId.toString(),
+
+    };
+    print('__________${parameter}_________');
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.animalCatList), parameter).then((getData) async {
       bool error = getData ['error'];
       if(!error){
-        breedListModel = BreedListModel.fromJson(getData);
+        breedListModel = GetSubListBreedModel.fromJson(getData);
         setState(() {
 
         });
       }else {
 
       }
-
     });
+  }
 
+
+  String ? date;
+  Future<void> getDateApi(String animalId) async {
+
+    var parameter = {
+      'dob': animalId.toString(),
+
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getDateList), parameter).then((getData) async {
+     date  = getData ['data'];
+     ageCtr.text = date!;
+    });
   }
 
   bool isLoading=false;
   List <File> selectedImageList = [];
   File? selectedImage;
+
   Future<void> addAnimalApi() async {
     setState(() {
       isLoading = true;
     });
     Map<String,String> parameter = {
       'user_id': userId.toString(),
-      'tag_id': "GOTN${animalNameCtr.text}",
+      'tag_id': "${animalNameCtr.text}",
       'cat_id': catId.toString(),
       'sub_cat': breedId.toString(),
-      'gander': gender ?? "",
+      'gander': gender == null ? kidsGender.toString() : gender.toString(),
       'procurement': born  ?? "",
       'birth_date':brithDateCtr.text ,
-      'birth_weight':brithWeightCtr.text,
+      'birth_weight':"",
       'mother_id': motherCtr.text,
       'father_id': fatherCtr.text,
       'purchase_date': purchaseDateCtr.text,
       'age': ageCtr.text,
-      'weight': weightCtr.text,
+      'weight':brithWeightCtr.text.isEmpty ?  weightCtr.text :brithWeightCtr.text,
       'delivery_date': selectDeliveryDateCtr.text,
       'if_male': breed ?? "",
       'ready_for_sale': _radioValue,
       'sale_weight': saleWeightCtr.text,
-      'sale_price': salePriceCtr.text
+      'sale_price': salePriceCtr.text,
+      'add_type':widget.isValue == true ? 'breed': " ",
+      'status': status == null? "kids": status.toString(),
+
     };
+    print('______parameter____${parameter}_________');
     apiBaseHelper.postMultipartAPICall(Uri.parse(ApiService.addAnimal), parameter, fileKey: 'image', files: selectedImageList).then((getData) {
 
       bool error = getData['error'];
+
       if (error == false) {
         Fluttertoast.showToast(msg: "${getData['message']}");
-        Navigator.pop(context);
-        //Navigator.push(context, MaterialPageRoute(builder: (context)=>AnimalRecord()));
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen())) ;
-
+           if(widget.isValue == true){
+             Navigator.pop(context, true);
+           }else{
+             Navigator.pop(context);
+           }
+      }else{
+        Fluttertoast.showToast(msg: "${getData['message']}");
       }
       setState(() {
         isLoading = false;

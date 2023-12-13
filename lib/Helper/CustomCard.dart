@@ -112,7 +112,7 @@ class CustomCard3 extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   color:
                   currentindex == true ? colors.transparent : colors.textColor),
             )),

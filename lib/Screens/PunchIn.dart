@@ -59,8 +59,18 @@ class _PunchInScreenState extends State<PunchInScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getStatus();
     geUserId();
     convertDateTimeDisplay();
+
+
+  }
+  var getpunchIddd;
+  Future<void> getStatus() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     getpunchIddd= await prefs.getString("punchiid");
+     print('_iiid_________${getpunchIddd}_________');
   }
   String _twoDigits(int n) {
     if (n >= 10) return '$n';
@@ -135,9 +145,9 @@ bool done =  false;
             Btn(
               height: 50,
               width: 150,
-              title: isLoading == true ? getTranslated(context, "PLEASE"): checkStatus == "present"  ?  getTranslated(context, "PUNCH_OUT"):getTranslated(context, "PUNCH_IN"),
+              title: isLoading == true ? getTranslated(context, "PLEASE"): getpunchIddd==null ? getTranslated(context, "PUNCH_IN"): getTranslated(context, "PUNCH_OUT"),
               onPress: (){
-                if(done == false){
+                if(getpunchIddd==null){
                   addPunchInApi();
                 }else{
                   addPunchOutApi();
@@ -157,17 +167,16 @@ bool done =  false;
       ),
     );
   }
-
   String? userId ;
   geUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId  =  prefs.getString('userId');
+    checkIn();
     setState(() {});
   }
 bool isLoading =  false;
-
   String? checkStatus;
-  int? punChID;
+  String? punChID;
   Future<void> addPunchInApi() async {
     setState(() {
       isLoading = true;
@@ -179,9 +188,17 @@ bool isLoading =  false;
       'month':formattedMonth,
       'status': 'present'
     };
+    print('_____parameter_____${parameter}_________');
     apiBaseHelper.postAPICall(Uri.parse(ApiService.punchIn), parameter).then((getData) async {
-      checkStatus = getData['data']['status'];
-      punChID = getData['punch_id'];
+
+      print('__________${getData}_________');
+      checkStatus = getData['status'];
+      punChID = getData['punch_id'].toString();
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+await prefs.setString("punchiid","${punChID.toString()}" );
+      print('_____punChID_____${punChID}_________');
+
        setState(() {
              isLoading = false;
             });
@@ -189,7 +206,7 @@ bool isLoading =  false;
           Fluttertoast.showToast(msg: "${getData['message']}");
         //  Navigator.pop(context);
         });
-
+Navigator.pop(context);
       setState(() {
         isLoading = false;
       });
@@ -201,24 +218,51 @@ bool isLoading =  false;
     setState(() {
       isLoading = true;
     });
+
+
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var getpunchIiid= await prefs.getString("punchiid");
+
     var parameter = {
-      'punch_id':punChID,
-      'out_time':timeData
+      // 'punch_id':punChID.toString(),
+      'punch_id':"${getpunchIiid.toString()}",
+      'out_time':timeData.toString()
     };
+    print('______kkkkk___${parameter}_________');
     apiBaseHelper.postAPICall(Uri.parse(ApiService.punchOut), parameter).then((getData) async {
-      checkStatus = getData['data']['status'];
-      setState(() {
-        isLoading = false;
-      });
+      print('__________${getData}_________');
+      // checkStatus = getData['data']['status'];
+      // setState(() {
+      //   isLoading = false;
+      // });
       setState(() {
         Fluttertoast.showToast(msg: "${getData['message']}");
+        prefs.remove("punchiid");
+
         //  Navigator.pop(context);
       });
-
+Navigator.pop(context);
       setState(() {
         isLoading = false;
       });
     });
+  }
+
+
+  Future<void> checkIn() async {
+
+    var parameter = {
+      'user_id':userId
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.checkStatus), parameter).then((getData) async {
+      print('__________${getData}_________');
+
+        checkStatus = getData['data'];
+        setState(() {});
+
+    });
+
   }
 }
 
