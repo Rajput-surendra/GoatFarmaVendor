@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:madhu_farma/Helper/session.dart';
 
 
+import '../ApiPath/Api.dart';
 import '../Helper/Appbar.dart';
 import '../Helper/CustomCard.dart';
+import '../Model/MedicineRecord/Get_medicine_model.dart';
 import '../Utils/Colors.dart';
 import 'NewMedicine.dart';
 
@@ -22,6 +24,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
   void initState() {
     // TODO: implement initState
     // currentindex1=true;
+    getMedicineListApi();
     super.initState();
   }
 
@@ -46,7 +49,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
         isTrue: true,
       ),      body: SingleChildScrollView(
         child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
 
@@ -79,7 +82,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
                       padding: EdgeInsets.all(10),
                       child: Image.asset("assets/images/Group 72309.png"),
                     ),
-                    contentPadding: EdgeInsets.only(left: 10),
+                    contentPadding: EdgeInsets.only(left: 10,top: 15),
                     border: InputBorder.none),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -87,6 +90,94 @@ class _MedicineRecordState extends State<MedicineRecord> {
                   }
                   return null;
                 },
+              ),
+            ),
+
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: RefreshIndicator(
+                onRefresh: () {
+                  return
+                    Future.delayed(Duration(seconds: 2),() {
+                      getMedicineListApi();
+                    },);
+                },
+                child: getMedicineModel == null || getMedicineModel == "" ? Center(child: CircularProgressIndicator()):ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context,i){
+                      return Container(
+                        height: MediaQuery.of(context).size.height/1.1,
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: getMedicineModel!.data!.length,
+                            itemBuilder: (context,i){
+                              return Card(
+                                elevation: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text('${getTranslated(context, "DISEASE")}' ": "),
+                                              Text('${getMedicineModel!.data![i].disease}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold),),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('${getTranslated(context, "MEDICINE_ID")}' " :"),
+                                              Text('${getMedicineModel!.data![i].medicineId}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text('${getTranslated(context, "MEDICINE_NAME")}' " :"),
+                                              Text('${getMedicineModel!.data![i].medicineName}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('${getTranslated(context, "BALANCE")}' " :"),
+                                              Text('${getMedicineModel!.data![i].qty}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          Row(
+                                            children: [
+                                              Text('${getTranslated(context, "EXPIRY_DATE")}' " :"),
+                                              Text('${getMedicineModel!.data![i].expDate}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
+                                            ],
+                                          )
+
+                                          // Row(
+                                          //   children: [
+                                          //     Text('${getTranslated(context, "GROWER")}' " :"),
+                                          //     Text('${getMedicineModel!.data![i].pregnent}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
+                                          //   ],
+                                          // )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      );
+                    }),
               ),
             ),
             Container(
@@ -134,5 +225,28 @@ class _MedicineRecordState extends State<MedicineRecord> {
     ),
       ),
     );
+  }
+
+
+  GetMedicineModel? getMedicineModel;
+  Future<void> getMedicineListApi() async {
+    apiBaseHelper.getAPICall(Uri.parse(ApiService.getMedicineList)).then((getData) {
+      bool error = getData ['error'];
+      print('___getData_______${getData}_________');
+      setState(() {
+        getMedicineModel = GetMedicineModel.fromJson(getData);
+      });
+
+      // if(!error){
+      //
+      //   setState(() {
+      //
+      //   });
+      // }else {
+      //
+      // }
+
+    });
+
   }
 }

@@ -36,6 +36,9 @@ class ApiService {
   static const String  getMatingList = baseUrl+'meating_list';
   static const String  getSupplementList = baseUrl+'suplimet_list';
   static const String  getMedicine = baseUrl+'add_medicine';
+  static const String  aadMedicineSchedule = baseUrl+'medicine_schedule';
+  static const String  getMedicineList = baseUrl+'medicine_list';
+  static const String  getMedicineDuaList = baseUrl+'medicine_due_records';
   static const String  getBreedingSingle = baseUrl+'get_breeding_data';
   static const String  getBreedingList = baseUrl+'get_breed_animal';
   static const String  getDateList = baseUrl+'age_calculate';
