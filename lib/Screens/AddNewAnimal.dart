@@ -1363,6 +1363,7 @@ class _AddNewAnimalState extends State<AddNewAnimal> {
     apiBaseHelper.postAPICall(Uri.parse(ApiService.getDateList), parameter).then((getData) async {
      date  = getData ['data'];
      ageCtr.text = date!;
+     print('_____ageCtr.text_____${ageCtr.text}_________');
     });
   }
 

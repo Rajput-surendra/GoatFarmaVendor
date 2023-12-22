@@ -9,12 +9,16 @@ import 'package:madhu_farma/Medicine/MedicineConsume.dart';
 
 import '../ApiPath/Api.dart';
 import '../Helper/Appbar.dart';
+import '../Model/MedicineRecord/Get_medicine_model.dart';
+import '../Model/MedicineRecord/Get_update_model.dart';
 import '../Model/animal_cat_model_response.dart';
 import '../Utils/Colors.dart';
 
 
 class NewMedicine extends StatefulWidget {
-  const NewMedicine({Key? key}) : super(key: key);
+  String ? mId;
+  bool? isAdd;
+   NewMedicine({Key? key,this.mId,this.isAdd}) : super(key: key);
 
   @override
   State<NewMedicine> createState() => _NewMedicineState();
@@ -24,7 +28,7 @@ final _formKey = GlobalKey<FormState>();
 String? catValueNew ;
 
  List<String> catValueitems = [
-  'Kids', 'Male','Female','Pregnant','Matted','All'
+  'Kids','Male','Female','Pregnant','Matted','All'
 ];
 String? weightValueNew ;
 String? qtyValueNew ;
@@ -32,16 +36,17 @@ final List<String> weightQty = ['1', '2', '3','4','1.2','2.5'];
 
 
 final List<String> weightValueitems = ['Canine Flu', 'Anthrax', 'Botulism','Brucellosis'];
-
 String? typeValueNew;
-String? unitVNew;
 
+
+String? unitVNew;
 final List<String> unitType = ['KG', 'Liter', 'No', 'ML', 'G', 'MG'];
 String? male;
 
 class _NewMedicineState extends State<NewMedicine> {
   final medicineIdctr=TextEditingController();
   final medicineNameCtr=TextEditingController();
+  final qtyCtr=TextEditingController();
   final selectDeliveryDateCtr=TextEditingController();
   final  doseC=TextEditingController();
   final bodyWeightCtr=TextEditingController();
@@ -52,10 +57,41 @@ class _NewMedicineState extends State<NewMedicine> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getMedicineListApi();
     animalCatApi();
+
   }
+
+
+
+  GetUpdateModel? getUpdateModel;
+  getMedicineListApi() async {
+    var parameter = {
+      'id':widget.mId.toString()
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineList), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        getUpdateModel = GetUpdateModel.fromJson(getData);
+        medicineIdctr.text = "${getUpdateModel?.data?.medicineId}";
+        selectDeliveryDateCtr.text = "${getUpdateModel?.data?.expDate}";
+        medicineNameCtr.text = "${getUpdateModel?.data?.medicineName}";
+        medicineNameCtr.text = "${getUpdateModel?.data?.medicineName}";
+        catValueNew = "${getUpdateModel?.data?.medicineType}";
+        weightValueNew = "${getUpdateModel?.data?.disease}";
+        qtyCtr.text = "${getUpdateModel?.data?.qty}";
+        unitVNew = "${getUpdateModel?.data?.unit}";
+
+      });
+
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+
     final size = MediaQuery.of(context).size;
     return Scaffold(
       bottomSheet:  Padding(
@@ -63,7 +99,11 @@ class _NewMedicineState extends State<NewMedicine> {
         child: Btn(
           onPress: (){
             if(_formKey.currentState!.validate()){
-              addMedicineApi();
+              if(widget.isAdd ==true) {
+                updateMedicineApi();
+              }else{
+                addMedicineApi();
+              }
             }else if(catValueNew ==  null){
               Fluttertoast.showToast(msg: "Please select medicine");
             }else if(weightValueNew == null){
@@ -209,7 +249,6 @@ class _NewMedicineState extends State<NewMedicine> {
                                 child: Container(
                                   height: 55,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
                                     controller: medicineIdctr,
                                     decoration: InputDecoration(
                                         suffixIcon: Container(
@@ -433,7 +472,7 @@ class _NewMedicineState extends State<NewMedicine> {
                                                 color: Colors.white,
                                               borderRadius: BorderRadius.circular(5)
                                             ),
-                                            height: 55,
+                                            height: 50,
                                             width: MediaQuery.of(context).size.width/2.3,
 
                                             child:  TextFormField(
@@ -486,101 +525,47 @@ class _NewMedicineState extends State<NewMedicine> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(
-                                          width: 5,
-                                        ),
+                                        SizedBox(width: 5,),
                                         Text(
-                                          getTranslated(context, "QTY")
-                                          ,
-                                          style: TextStyle(
-                                              color: colors.blacktextColor),
+                                          getTranslated(context, "QTY"),
+                                          style: TextStyle(color: colors.blacktextColor),
                                         ),
                                       ],
                                     ),
-                                    Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 3, bottom: 3),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Padding(
-                                              padding: EdgeInsets.only(bottom: 0),
-                                              child: Text(
-                                                "",
-                                                style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                            // dropdownColor: colors.primary,
-                                            value: qtyValueNew,
-                                            icon: const Padding(
-                                              padding: EdgeInsets.only(right: 5),
-                                              child: Icon(
-                                                Icons.keyboard_arrow_down_rounded,
-                                                color: colors.secondary,
-                                                size: 30,
-                                              ),
-                                            ),
-                                            // elevation: 16,
-                                            style: TextStyle(
-                                                color: colors.secondary,
-                                                fontWeight: FontWeight.bold),
-                                            underline: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 0, right: 0),
-                                              child: Container(
-                                                // height: 2,
-                                                color: colors.whiteTemp,
-                                              ),
-                                            ),
-                                            onChanged: (String? value) {
-                                              // This is called when the user selects an item.
-                                              setState(() {
-                                                qtyValueNew = value!;
-                                              });
-                                            },
 
-                                            items: weightQty
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(4.0),
-                                                          child: Text(
-                                                            value,
-                                                            style: const TextStyle(
-                                                                color: colors.textColor,
-                                                                fontWeight:
-                                                                FontWeight.normal),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                          ),
-                                        ),
+                                    // TextFormCard(
+                                    //   name:"${getTranslated(context, "MEDICINE_NAME")}" ,
+                                    //   width: MediaQuery.of(context).size.width/2.3,
+                                    //   controller: _medicineNameCtr,
+                                    //   validString:getTranslated(context, "MEDICINE_NAME"),
+                                    // ),
+
+                                    Card(
+                                      elevation: 1.0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4.0),
                                       ),
+                                      child:Container(
+                                          width: size.width/2.2,
+                                          child: TextFormField(
+                                            keyboardType: TextInputType.number,
+                                            controller: qtyCtr,
+                                            cursorHeight: 20,
+                                            decoration: InputDecoration(border: InputBorder.none,contentPadding: EdgeInsets.only(left: 7)),
+                                            validator: (value){
+                                              if(value?.length==null||value!.isEmpty){
+                                                return "${getTranslated(context, "QTY")} ${getTranslated(context, "IS_REQUIRED")}";
+                                              }
+                                            },
+                                          )),
                                     ),
                                   ],
                                 ),
+
                               ),
                               SizedBox(
                                 height: 10,
@@ -593,7 +578,101 @@ class _NewMedicineState extends State<NewMedicine> {
                     SizedBox(
                       height: 10,
                     ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              getTranslated(context, "UNIT")
+                              ,
+                              style: TextStyle(
+                                  color: colors.blacktextColor),
+                            ),
+                          ],
+                        ),
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 3, bottom: 3),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Padding(
+                                  padding: EdgeInsets.only(bottom: 0),
+                                  child: Text(
+                                    "",
+                                    style: TextStyle(
+                                        color: colors.blackTemp,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 14),
+                                  ),
+                                ),
+                                // dropdownColor: colors.primary,
+                                value: unitVNew,
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(right: 5),
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: colors.secondary,
+                                    size: 30,
+                                  ),
+                                ),
+                                // elevation: 16,
+                                style: TextStyle(
+                                    color: colors.secondary,
+                                    fontWeight: FontWeight.bold),
+                                underline: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 0, right: 0),
+                                  child: Container(
+                                    // height: 2,
+                                    color: colors.whiteTemp,
+                                  ),
+                                ),
+                                onChanged: (String? value) {
+                                  // This is called when the user selects an item.
+                                  setState(() {
+                                    unitVNew = value!;
+                                  });
+                                },
 
+                                items: unitType
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                              const EdgeInsets.all(4.0),
+                                              child: Text(
+                                                value,
+                                                style: const TextStyle(
+                                                    color: colors.textColor,
+                                                    fontWeight:
+                                                    FontWeight.normal),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     // Row(
                     //   children: [
                     //     SizedBox(
@@ -1161,18 +1240,17 @@ class _NewMedicineState extends State<NewMedicine> {
   }
 
   bool isLoading = true;
-
-
   Future<void> addMedicineApi() async {
     setState(() {
       isLoading = true;
     });
     var parameter = {
-      'medicine_type':catValueNew,
+      'medicine_type':catValueNew.toString(),
       'medicine_id':medicineIdctr.text,
-      'disease':weightValueNew,
+      'disease':weightValueNew.toString(),
       'medicine_name':medicineNameCtr.text,
-      'qty':qtyValueNew,
+      'unit':unitVNew.toString(),
+       'qty':qtyCtr.text,
       'exp_date':selectDeliveryDateCtr.text,
       // 'category':catNewList.toString(),
       // 'animal_id': '27',
@@ -1181,6 +1259,41 @@ class _NewMedicineState extends State<NewMedicine> {
       // 'unit':unitList.toString(),
       // 'description':directionCtr,
       // 'safe_for_pregnent':'yes'
+    };
+    print('_____parameter_____$parameter}_________');
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicine), parameter).then((getData) async {
+      bool error = getData['error'];
+      setState(() {
+        isLoading = false;
+      });
+      if (error ==  false) {
+        setState(() {
+          Fluttertoast.showToast(msg: "${getData['message']}");
+          Navigator.pop(context);
+
+        });
+        catValueNew == null;
+        weightValueNew == null;
+        unitVNew == null;
+      }
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+  Future<void> updateMedicineApi() async {
+    setState(() {
+      isLoading = true;
+    });
+    var parameter = {
+      'medicine_type':catValueNew.toString(),
+      'medicine_id':medicineIdctr.text,
+      'disease':weightValueNew.toString(),
+      'medicine_name':medicineNameCtr.text,
+      'qty':qtyCtr.text,
+      'unit':unitVNew.toString(),
+      'exp_date':selectDeliveryDateCtr.text,
+
     };
     print('_____parameter_____$parameter}_________');
     apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicine), parameter).then((getData) async {

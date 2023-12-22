@@ -74,6 +74,7 @@ class _AnimalRecordState extends State<AnimalRecord> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+
            Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewAnimal())).then((value) {
              if(value != null){
                animalListApi("" ,"");
@@ -81,7 +82,7 @@ class _AnimalRecordState extends State<AnimalRecord> {
            });
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.darkBlue,
+        backgroundColor: colors.secondary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
@@ -392,9 +393,10 @@ class _AnimalRecordState extends State<AnimalRecord> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text("${getTranslated(context, "AGE" )}" ": ",),
-                                      Text("5")
-                                      // Container(
-                                      //     child: Text(" ${animalListModel?.data?[i].age}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,),maxLines: 1,))
+                                      // Text("5")
+                                      Container(
+                                        width: 80,
+                                          child: Text(" ${animalListModel?.data?[i].age}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,),maxLines: 1,))
                                     ],
                                   ),
                                   SizedBox(height: 5,),

@@ -92,7 +92,6 @@ class _ScanPayState extends State<ScanPay> {
       setState(() {
         result = scanData;
       });
-
       if (result != null) {
         Navigator.pop(context,result?.code );
         // await ScannqrCodeApi(result!.code.toString());
@@ -104,6 +103,7 @@ class _ScanPayState extends State<ScanPay> {
       }
     });
   }
+
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');

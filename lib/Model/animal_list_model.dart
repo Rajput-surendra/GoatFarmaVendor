@@ -7,8 +7,8 @@
 class AnimalListModel {
   AnimalListModel({
       bool? error, 
-      String? message, 
-      int? totalWeight,
+      String? message,
+    dynamic totalWeight,
       int? totalAnimals,
       List<AnimalData>? data,}){
     _error = error;
@@ -32,12 +32,12 @@ class AnimalListModel {
   }
   bool? _error;
   String? _message;
-  int? _totalWeight;
+  dynamic _totalWeight;
   int? _totalAnimals;
   List<AnimalData>? _data;
 AnimalListModel copyWith({  bool? error,
   String? message,
-  int? totalWeight,
+  dynamic totalWeight,
   int? totalAnimals,
   List<AnimalData>? data,
 }) => AnimalListModel(  error: error ?? _error,
@@ -48,7 +48,7 @@ AnimalListModel copyWith({  bool? error,
 );
   bool? get error => _error;
   String? get message => _message;
-  int? get totalWeight => _totalWeight;
+  dynamic get totalWeight => _totalWeight;
   int? get totalAnimals => _totalAnimals;
   List<AnimalData>? get data => _data;
 

@@ -139,6 +139,8 @@
   "DOSE": "डोस",
   "DIRECTION": "दिशा",
   "MEDICINE_PREGNANT": "गर्भवतीसाठी औषध सुरक्षित",
+  "SAFE_PREGNANT": "गर्भवतींसाठी सुरक्षित",
+  "UPDATE": "अपडेट करा",
   "MEDICINE_SCHEDULE_RECORD": "औषध वेळापत्रक रेकॉर्ड",
   "SCAN_MEDICINE_ID": "औषध आयडी स्कॅन करा / प्रविष्ट करा",
   "ADD_MEDICINE_SCHEDULE": "औषध वेळापत्रक जोडा",

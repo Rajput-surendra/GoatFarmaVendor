@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'package:flutter/material.dart';
@@ -10,8 +12,13 @@ import '../Helper/CustomText.dart';
 import '../Helper/session.dart';
 import '../Medicine/NewMedicine.dart';
 import '../Model/MedicineRecord/Get_medicine_model.dart';
+import '../Model/MedicineRecord/Get_single_data_medicine_model.dart';
+import '../Model/MilkRecord/milk_filtter_model.dart';
 import '../Model/animal_cat_model_response.dart';
+import '../Scanner/scanner_view.dart';
 import '../Utils/Colors.dart';
+import 'package:http/http.dart' as http;
+
 import '../helper/appbar.dart';
 
 class AddMedicineSchedule extends StatefulWidget {
@@ -51,6 +58,7 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
     super.initState();
     animalCatApi();
     getMedicineListApi();
+    getAnimalFilterApi("");
   }
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -110,27 +118,42 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
               ),
                 SizedBox(height: 10,),
                 Card(
-                  child: Container(
-                    height: 55,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: _tagId,
-                      decoration: InputDecoration(
-                          suffixIcon: Container(
+                  elevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: TextFormField(
+                    controller: _tagId,
+                    onChanged: (v){
+                      getAnimalFilterApi(v);
+                    },
+
+
+                    // controller: supplementController,
+                    decoration: InputDecoration(
+                        suffixIcon:InkWell(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanPay())).then((v){
+                              if(v != null){
+                                getAnimalFilterApi(v);
+                              }
+                            });;
+                          },
+                          child: Container(
                             height: 10,
                             width: 10,
                             padding: EdgeInsets.all(10),
                             child: Image.asset("assets/images/Group 72309.png"),
                           ),
-                          contentPadding: EdgeInsets.only(left: 10,top: 18),
-                          border: InputBorder.none),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please Enter 2nd onwards';
-                        }
-                        return null;
-                      },
-                    ),
+                        ),
+                        contentPadding: EdgeInsets.only(left: 10,top: 15),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please Enter 2nd onwards';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: 15,),
@@ -142,6 +165,84 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                     Text('Age:4 (Month)',style: TextStyle(fontSize:12)),
                     Text('Weight: 35 kg ',style: TextStyle(fontSize:12)),
                   ],
+                ),
+                milkFiltterModel?.data?.weight == null ? Center(child: Text("No record found!!!")):   Card(
+                    child:Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "${getTranslated(context, "TAG_ID" )}" ": ",
+                                  ),
+                                  Text(
+                                    "${milkFiltterModel!.data!.tagId}",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.textColor,
+                                        fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${getTranslated(context, "BREED")}"": ",),
+                                  Text(
+                                    "${milkFiltterModel!.data!.breed}",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.textColor,
+                                        fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "${getTranslated(context, "AGE")}"": ",),
+                                  Text(
+                                    "${milkFiltterModel!.data!.age}",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.textColor,
+                                        fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${getTranslated(context, "WEIGHT")}"": ",),
+                                  Text(
+                                    "${milkFiltterModel!.data!.weight}",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.textColor,
+                                        fontWeight: FontWeight.w500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                    )
+
                 ),
                 SizedBox(height: 15,),
                 Row(
@@ -343,13 +444,6 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                   SizedBox(
                   height: 10,
                 ),
-
-
-
-                SizedBox(
-                  height: 5,
-                ),
-
                 SizedBox(height: 15,),
                 Row(
                   children: [
@@ -692,95 +786,6 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                         child: Container(
                           child: Column(
                             children: [
-                              // SizedBox(height: 15,),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              //   children: [
-                              //     Text(getTranslated(context, "CATEGORY"),
-                              //       style: TextStyle(
-                              //           fontSize: 14, color: colors.darkBlue),
-                              //     ),
-                              //     Text(getTranslated(context, "BODY_WEIGHT"),
-                              //       style: TextStyle(
-                              //           fontSize: 14, color: colors.darkBlue),
-                              //     ),
-                              //     Text(
-                              //       getTranslated(context, "DOSE"),
-                              //       style: TextStyle(
-                              //           fontSize: 14, color: colors.darkBlue),
-                              //     ),
-                              //     Text(
-                              //       getTranslated(context, "UNIT"),
-                              //       style: TextStyle(
-                              //           fontSize: 14, color: colors.darkBlue),
-                              //     ),
-                              //
-                              //     Text(
-                              //       getTranslated(context, "UNIT"),
-                              //       style: TextStyle(
-                              //           fontSize: 14, color: colors.darkBlue),
-                              //     ),
-                              //   ],
-                              // ),
-                              // ListView.builder(
-                              //   shrinkWrap: true,
-                              //   physics:NeverScrollableScrollPhysics(),
-                              //   itemCount: addTableList.length,
-                              //     itemBuilder: (context,i){
-                              //    return  Container(
-                              //      decoration: BoxDecoration(
-                              //        border: Border(
-                              //          bottom: BorderSide(
-                              //            color: colors.blacktextColor,
-                              //            // Specify your desired border color here
-                              //            width: 1.0, // Adjust the border width
-                              //          ),
-                              //        ),
-                              //      ),
-                              //      child:
-                              //
-                              //
-                              //      Container(
-                              //        padding: const EdgeInsets.all(14.0),
-                              //        child: Row(
-                              //          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //          children: [
-                              //            // SizedBox(width: MediaQuery.of(context).size.width/23,),
-                              //            Text(
-                              //              "${addTableList[i]["cat"]}",
-                              //              style: TextStyle(
-                              //                  fontSize: 16,
-                              //                  color: colors.blacktextColor,
-                              //                  fontWeight: FontWeight.w500),
-                              //            ),
-                              //            Text(
-                              //              "${addTableList[i]["body"]}",
-                              //              style: TextStyle(
-                              //                  fontSize: 16,
-                              //                  color: colors.blacktextColor,
-                              //                  fontWeight: FontWeight.w500),
-                              //            ),
-                              //            Text(
-                              //              "${addTableList[i]["dose"]}",
-                              //              style: TextStyle(
-                              //                  fontSize: 16,
-                              //                  color: colors.blacktextColor,
-                              //                  fontWeight: FontWeight.w500),
-                              //            ),
-                              //            Text(
-                              //              "${addTableList[i]["unit"]}",
-                              //              style: TextStyle(
-                              //                  fontSize: 16,
-                              //                  color: colors.blacktextColor,
-                              //                  fontWeight: FontWeight.w500),
-                              //            ),
-                              //
-                              //          ],
-                              //        ),
-                              //      ),
-                              //    );
-                              //
-                              //     }),
                               DataTable(
                                 columns: [
                                   DataColumn(label: Text(getTranslated(context, "TAG_ID"))),
@@ -850,259 +855,6 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                 ),
 
 
-                // Card(child:
-                // Container(
-                //   width: MediaQuery.of(context).size.width,
-                //   // color: Colors.white,
-                //   child:Padding(padding: EdgeInsets.all(8),
-                //     child: Table(
-                //       // Set the border property to remove cell borders
-                //       border: TableBorder.symmetric(
-                //         // inside: BorderSide.none,
-                //         outside: BorderSide.none,
-                //       ),
-                //       children: [
-                //         // Create a table row
-                //         TableRow(
-                //           children: [
-                //             // Create a table cell with text
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child:  Text(
-                //                     'Medicine',
-                //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: colors.darkBlue)
-                //                 ),
-                //               ),
-                //             ),
-                //             // Create another table cell with text
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child:  Text(
-                //                     'Period',
-                //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: colors.darkBlue)
-                //                 ),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child:  Text(
-                //                     'From',
-                //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: colors.darkBlue)
-                //                 ),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child:  Text(
-                //                     'Days',
-                //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: colors.darkBlue)
-                //                 ),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child:  Text(
-                //                     'Time',
-                //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: colors.darkBlue)
-                //                 ),
-                //               ),
-                //             ),
-                //
-                //           ],
-                //         ),
-                //
-                //         TableRow(
-                //           children: [
-                //             // Create a table cell with text
-                //
-                //             // Create another table cell with text
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('PPR'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Continous'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('365'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('1'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Morning'),
-                //               ),
-                //             ),
-                //
-                //           ],
-                //         ),
-                //         TableRow(
-                //           children: [
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //
-                //         TableRow(
-                //           children: [
-                //             // Create a table cell with text
-                //
-                //             // Create another table cell with text
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Caflog'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('One Time'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('1'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('3'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Mor & Evn'),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //         // Divider(color: ,),
-                //         TableRow(
-                //           children: [
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Divider(
-                //                 color: Colors.grey,  // Customize the line color
-                //                 thickness: 1,  // Set the thickness of the line
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //         TableRow(
-                //           children: [
-                //             // Create a table cell with text
-                //
-                //             // Create another table cell with text
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Albomar'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Continous'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(8.0),
-                //                 child: Text('180'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('1'),
-                //               ),
-                //             ),
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(5.0),
-                //                 child: Text('Morning'),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),),
-
               ],
             ) ,
           ),
@@ -1129,39 +881,74 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
       isLoading = true;
     });
 
-    var parameter = {
-    'category':catNewList.toString(),
-    'weight':bodyList.toString(),
-    'dose':doessList.toString(),
-    'unit':unitList.toString(),
-    'direction':directionList.toString(),
-    'safe_for_pregnant':pregnantList.toString(),
-    'animal_id':animalIdList.toString(),
-    'medicine_id':medicineList.toString(),
-    'period':periodList.toString(),
-      'date':todayList.toString(),
-    'day':fromDayList.toString(),
-    'time':timeList.toString()
-    };
-    print('_____parameter_____$parameter}_________');
-    apiBaseHelper.postAPICall(Uri.parse(ApiService.aadMedicineSchedule), parameter).then((getData) async {
-      bool error = getData['error'];
-      setState(() {
-        isLoading = false;
-      });
-      if (error ==  false) {
-        setState(() {
-          Fluttertoast.showToast(msg: "${getData['message']}");
-          Navigator.pop(context);
-        });
-
-      }
-      setState(() {
-        isLoading = false;
-      });
+    // var parameter = jsonEncode({
+    //   'category':catNewList.toString(),
+    //   'weight':bodyList.toString(),
+    //   'dose':doessList.toString(),
+    //   'unit':unitList.toString(),
+    //   'direction':directionList.toString(),
+    //   'safe_for_pregnant':pregnantList.toString(),
+    //   'animal_id':animalIdList.toString(),
+    //   'medicine_id':medicineList.toString(),
+    //   'period':periodList.toString(),
+    //   'date':todayList.toString(),
+    //   'day':fromDayList.toString(),
+    //   'time':timeList.toString()
+    // });
+    var parameter = jsonEncode({
+      "category": extractNumbers(catNewList.toString()),
+      "weight": extractNumbers(bodyList.toString()),
+      "dose": extractNumbers(doessList.toString()),
+      "unit": extractStrings(unitList.toString()),
+      "direction": extractStrings(directionList.toString()),
+      "safe_for_pregnant": extractBooleans(pregnantList.toString()),
+      "animal_id": extractStrings(animalIdList.toString()),
+      "medicine_id": extractNumbers(medicineList.toString(),),
+      "period": extractStrings(periodList.toString(),),
+      "date": extractStrings(todayList.toString()),
+      "day": extractNumbers(fromDayList.toString()),
+      "time": extractStrings(timeList.toString()),
     });
+
+    var response = await http.post(Uri.parse(ApiService.aadMedicineSchedule), body:parameter);
+    Fluttertoast.showToast(msg: "Add Medicine Schedule Successfully");
+   Navigator.pop(context);
+    // print('____response______${response}___${parameter}______');
   }
 
+  List<String> extractStrings(String input) {
+    List<dynamic> list = extractValues(input);
+    return list.map((value) => value.toString()).toList();
+  }
+
+  List<String> extractNumbers(String input) {
+    List<dynamic> list = extractValues(input);
+    return list.map((value) => value.toString()).toList();
+  }
+
+  List<bool> extractBooleans(String input) {
+    List<dynamic> list = extractValues(input);
+    return list.map((value) => value.toString().toUpperCase() == "YES").toList();
+  }
+
+  List<dynamic> extractValues(String input) {
+    List<String> values = input.replaceAll(RegExp(r'[\[\]\s]'), '').split(',');
+    return values.map((value) => value.trim()).toList();
+  }
+  GetSingleDataMedicineModel? milkFiltterModel;
+  getAnimalFilterApi(String? tagId) async {
+    var parameter = {
+      'tag_id':tagId
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineSingleData), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        milkFiltterModel = GetSingleDataMedicineModel.fromJson(getData);
+        Fluttertoast.showToast(msg: "${msg}");
+      });
+
+    });
+  }
 
   onTimeView(){
     return Column(

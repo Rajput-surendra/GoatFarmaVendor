@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:madhu_farma/Helper/session.dart';
 
+import '../ApiPath/Api.dart';
 import '../Helper/Appbar.dart';
 import '../Helper/CustomCard.dart';
+import '../Model/Supplement/Get_supplement_due_record_model.dart';
+import '../Scanner/scanner_view.dart';
 import '../Utils/Colors.dart';
 import 'SupplementConsume.dart';
 
@@ -49,51 +52,240 @@ class _SupplementDueRecordState extends State<SupplementDueRecord> {
             const SizedBox(
               height: 10,
             ),
-            SizedBox(
-              width: size.width / 1,
-              child: Card(
-                child: Container(
-                  height: 55,
-                  child: Center(
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      // controller: supplementController,
-                      decoration: InputDecoration(
-                          suffixIcon: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Image.asset("assets/images/Group 72309.png"),
-                          ),
-                          contentPadding: EdgeInsets.only(left: 10),
-                          border: InputBorder.none),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please Enter 2nd onwards';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
+            Card(
+              elevation: 1.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
               ),
-            ),InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> SupplementConsume()));
-              },
-              child: CustomCard4(
-                  name1: 'Catogories : Goat',
-                  name2: 'Date',
-                  name3: 'Due on : 25/08/2023',
-                  name4: 'Breed Type : Kids',
-                  name5: '3:40 pm',
-                  name6: 'Avl.Stock : 35 kg'),
+              child: TextFormField(
+                onChanged: (v){
+                  getSupplementDueRecordApi(v);
+                },
+
+
+                // controller: supplementController,
+                decoration: InputDecoration(
+                    suffixIcon:InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanPay())).then((v){
+                          if(v != null){
+                            getSupplementDueRecordApi(v);
+
+                          }
+                        });;
+                      },
+                      child: Container(
+                        height: 10,
+                        width: 10,
+                        padding: EdgeInsets.all(10),
+                        child: Image.asset("assets/images/Group 72309.png"),
+                      ),
+                    ),
+                    contentPadding: EdgeInsets.only(left: 10,top: 15),
+                    border: InputBorder.none),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter 2nd onwards';
+                  }
+                  return null;
+                },
+              ),
             ),
-            CustomCard4(
-                name1: 'Catogories : Sheep',
-                name2: 'Date',
-                name3: 'Due on : 12/08/2023',
-                name4: 'Breed Type : Pregnant',
-                name5: '3:45 pm',
-                name6: 'Avl.Stock : 58 kg'),
+
+            // Container(
+            //   height: MediaQuery.of(context).size.height,
+            //   child: RefreshIndicator(
+            //     onRefresh: () {
+            //       return Future.delayed(
+            //         Duration(seconds: 2),
+            //             () {
+            //               getSupplementDueRecordApi("");
+            //         },
+            //       );
+            //     },
+            //     child: getSupplementDueRecordModel == null || getSupplementDueRecordModel == "" ? Center(child: CircularProgressIndicator()) : getSupplementDueRecordModel!.data!.isEmpty ? Center(child: Text("No Available Record"))
+            //         : ListView.builder(
+            //         itemCount: 1,
+            //         itemBuilder: (context, i) {
+            //           return Container(
+            //             //height: MediaQuery.of(context).size.height / 1.0,
+            //             child: ListView.builder(
+            //                 shrinkWrap: true,
+            //                 physics: NeverScrollableScrollPhysics(),
+            //                 itemCount: getSupplementDueRecordModel!.data!.length,
+            //                 itemBuilder: (context, i) {
+            //                   return InkWell(
+            //                     onTap: (){
+            //                       //Navigator.push(context, MaterialPageRoute(builder: (context)=>getDeathModel(animalId: breedListModel!.data![i].animalId)));
+            //                     },
+            //                     child: Card(
+            //                       elevation: 1,
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Column(
+            //                           children: [
+            //                             Row(
+            //                               mainAxisAlignment:
+            //                               MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "CATEGORIES")}'
+            //                                             ": "),
+            //                                     Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].animalId}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "DATE")}'
+            //                                             ": "),
+            //                                     getSupplementDueRecordModel!.data![i].date == null ? Text("No Available Age",style: TextStyle(
+            //                                         color: colors.blackTemp,
+            //                                         fontWeight:
+            //                                         FontWeight.bold)):  Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].date}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 )
+            //                               ],
+            //                             ),
+            //                             SizedBox(
+            //                               height: 2,
+            //                             ),
+            //                             Row(
+            //                               mainAxisAlignment:
+            //                               MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "DUE_ON")}'
+            //                                             ": "),
+            //                                     getSupplementDueRecordModel!.data![i].day == null ? Text("No available days",style: TextStyle(
+            //                                         color: colors.blackTemp,
+            //                                         fontWeight:
+            //                                         FontWeight.bold)):    Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].day}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "BREED_TYPE")}'
+            //                                             ": "),
+            //                                     Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].status}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 )
+            //                               ],
+            //                             ),
+            //                             SizedBox(height: 2),
+            //                             Row(
+            //                               mainAxisAlignment:
+            //                               MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "REASON")}'
+            //                                             ": "),
+            //                                     getSupplementDueRecordModel!.data![i].direction == null ? Text("No available",style: TextStyle(
+            //                                         color: colors.blackTemp,
+            //                                         fontWeight:
+            //                                         FontWeight.bold)):    Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].direction}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "TIME")}'
+            //                                             ": "),
+            //                                     getSupplementDueRecordModel!.data![i].weight == null ? Text("No available time",style: TextStyle(
+            //                                         color: colors.blackTemp,
+            //                                         fontWeight:
+            //                                         FontWeight.bold)):  Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].weight}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                               ],
+            //                             ),
+            //
+            //                             SizedBox(height: 2),
+            //                             Row(
+            //                               mainAxisAlignment:
+            //                               MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "AVL_STOCK")}'
+            //                                             ": "),
+            //                                     getSupplementDueRecordModel!.data![i].direction == null ? Text("No available",style: TextStyle(
+            //                                         color: colors.blackTemp,
+            //                                         fontWeight:
+            //                                         FontWeight.bold)):    Text(
+            //                                       '${getSupplementDueRecordModel!.data![i].direction}',
+            //                                       style: TextStyle(
+            //                                           color: colors.blackTemp,
+            //                                           fontWeight:
+            //                                           FontWeight.bold),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                                 Row(
+            //                                   children: [
+            //                                     Text(
+            //                                         '${getTranslated(context, "TIME")}'": "),
+            //
+            //                                   ],
+            //                                 ),
+            //                               ],
+            //                             ),
+            //                           ],
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   );
+            //                 }),
+            //           );
+            //         }),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -109,4 +301,19 @@ class _SupplementDueRecordState extends State<SupplementDueRecord> {
       ),
     );
   }
+  GetSupplementDueRecordModel? getSupplementDueRecordModel;
+  getSupplementDueRecordApi(String? tagId) async {
+    var parameter = {
+      'medicine_id':tagId
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getSupplementDueRecord), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        getSupplementDueRecordModel = GetSupplementDueRecordModel.fromJson(getData);
+
+      });
+
+    });
+  }
+
 }

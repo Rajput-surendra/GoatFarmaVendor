@@ -8,7 +8,9 @@ import '../Helper/Appbar.dart';
 import '../Helper/CustomCard.dart';
 import '../Model/Supplement/get_supplement_,model.dart';
 import '../Utils/Colors.dart';
-import '../Screens/AddSupplement.dart';
+import 'AddSupplement.dart';
+import 'NewAddSupplement.dart';
+
 
 class SupplementRecord extends StatefulWidget {
   const SupplementRecord({Key? key}) : super(key: key);
@@ -50,9 +52,10 @@ class _SupplementRecordState extends State<SupplementRecord> {
               itemCount: 1,
               itemBuilder: (context, i) {
                 return Container(
-                  height: MediaQuery.of(context).size.height / 1.0,
+                 // height: MediaQuery.of(context).size.height / 1.0,
                   child: ListView.builder(
                       shrinkWrap: true,
+                      reverse: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: getSupplementModel!.breed!.length,
                       itemBuilder: (context, i) {
@@ -63,7 +66,7 @@ class _SupplementRecordState extends State<SupplementRecord> {
                               children: [
                                 Card(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -72,7 +75,12 @@ class _SupplementRecordState extends State<SupplementRecord> {
                                           children: [
                                             Text("Stock: "),
                                             SizedBox(width: 2,),
-                                            Text("${getSupplementModel!.breed![i].stock}KG.",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.w500),),
+                                            Row(
+                                              children: [
+                                                Text("${getSupplementModel!.breed![i].stock}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.w500),),
+                                                Text("${getSupplementModel!.breed![i].unit}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.w500),),
+                                              ],
+                                            )
                                           ],
                                         )
                                       ],
@@ -109,7 +117,7 @@ class _SupplementRecordState extends State<SupplementRecord> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: colors.secondary,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>AddSupplement()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>NewAddSupplement())).then((value) => getSupplementApi());
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
