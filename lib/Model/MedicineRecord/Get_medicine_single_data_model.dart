@@ -1,40 +1,40 @@
 /// error : false
 /// message : "Record Get Sucessfully !"
-/// data : [{"id":"76","medicine_type":"Medicine","medicine_id":"har12","disease":"Botulism","medicine_name":"harish","qty":"180","exp_date":"29-12-2023","unit":"Liter","safe_for_pregnent":null,"description":null,"created_at":"2023-12-25 11:22:28"}]
+/// data : [{"id":"94","medicine_type":"Medicine","medicine_id":"ss120","disease":"Brucellosis","medicine_name":"test ho ","qty":"21","exp_date":"26-12-2023","unit":"Liter","safe_for_pregnent":"NO","description":"india demo","created_at":"2023-12-25 12:26:53"}]
 
-class GetUpdateModel {
-  GetUpdateModel({
+class GetMedicineSingleDataModel {
+  GetMedicineSingleDataModel({
       bool? error, 
       String? message, 
-      List<Data>? data,}){
+      List<MedicineDataa>? data,}){
     _error = error;
     _message = message;
     _data = data;
 }
 
-  GetUpdateModel.fromJson(dynamic json) {
+  GetMedicineSingleDataModel.fromJson(dynamic json) {
     _error = json['error'];
     _message = json['message'];
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
-        _data?.add(Data.fromJson(v));
+        _data?.add(MedicineDataa.fromJson(v));
       });
     }
   }
   bool? _error;
   String? _message;
-  List<Data>? _data;
-GetUpdateModel copyWith({  bool? error,
+  List<MedicineDataa>? _data;
+GetMedicineSingleDataModel copyWith({  bool? error,
   String? message,
-  List<Data>? data,
-}) => GetUpdateModel(  error: error ?? _error,
+  List<MedicineDataa>? data,
+}) => GetMedicineSingleDataModel(  error: error ?? _error,
   message: message ?? _message,
   data: data ?? _data,
 );
   bool? get error => _error;
   String? get message => _message;
-  List<Data>? get data => _data;
+  List<MedicineDataa>? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -48,20 +48,20 @@ GetUpdateModel copyWith({  bool? error,
 
 }
 
-/// id : "76"
+/// id : "94"
 /// medicine_type : "Medicine"
-/// medicine_id : "har12"
-/// disease : "Botulism"
-/// medicine_name : "harish"
-/// qty : "180"
-/// exp_date : "29-12-2023"
+/// medicine_id : "ss120"
+/// disease : "Brucellosis"
+/// medicine_name : "test ho "
+/// qty : "21"
+/// exp_date : "26-12-2023"
 /// unit : "Liter"
-/// safe_for_pregnent : null
-/// description : null
-/// created_at : "2023-12-25 11:22:28"
+/// safe_for_pregnent : "NO"
+/// description : "india demo"
+/// created_at : "2023-12-25 12:26:53"
 
-class Data {
-  Data({
+class MedicineDataa {
+  MedicineDate({
       String? id, 
       String? medicineType, 
       String? medicineId, 
@@ -70,8 +70,8 @@ class Data {
       String? qty, 
       String? expDate, 
       String? unit, 
-      dynamic safeForPregnent, 
-      dynamic description, 
+      String? safeForPregnent, 
+      String? description, 
       String? createdAt,}){
     _id = id;
     _medicineType = medicineType;
@@ -86,7 +86,7 @@ class Data {
     _createdAt = createdAt;
 }
 
-  Data.fromJson(dynamic json) {
+  MedicineDataa.fromJson(dynamic json) {
     _id = json['id'];
     _medicineType = json['medicine_type'];
     _medicineId = json['medicine_id'];
@@ -107,10 +107,10 @@ class Data {
   String? _qty;
   String? _expDate;
   String? _unit;
-  dynamic _safeForPregnent;
-  dynamic _description;
+  String? _safeForPregnent;
+  String? _description;
   String? _createdAt;
-Data copyWith({  String? id,
+  MedicineDataa copyWith({  String? id,
   String? medicineType,
   String? medicineId,
   String? disease,
@@ -118,10 +118,10 @@ Data copyWith({  String? id,
   String? qty,
   String? expDate,
   String? unit,
-  dynamic safeForPregnent,
-  dynamic description,
+  String? safeForPregnent,
+  String? description,
   String? createdAt,
-}) => Data(  id: id ?? _id,
+}) => MedicineDate(  id: id ?? _id,
   medicineType: medicineType ?? _medicineType,
   medicineId: medicineId ?? _medicineId,
   disease: disease ?? _disease,
@@ -141,8 +141,8 @@ Data copyWith({  String? id,
   String? get qty => _qty;
   String? get expDate => _expDate;
   String? get unit => _unit;
-  dynamic get safeForPregnent => _safeForPregnent;
-  dynamic get description => _description;
+  String? get safeForPregnent => _safeForPregnent;
+  String? get description => _description;
   String? get createdAt => _createdAt;
 
   Map<String, dynamic> toJson() {

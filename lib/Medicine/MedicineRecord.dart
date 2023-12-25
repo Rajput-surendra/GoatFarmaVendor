@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:madhu_farma/Helper/session.dart';
 
 
@@ -8,6 +9,7 @@ import '../Helper/CustomCard.dart';
 import '../Model/MedicineRecord/Get_medicine_model.dart';
 import '../Scanner/scanner_view.dart';
 import '../Utils/Colors.dart';
+import 'DetailsMedicineRecord.dart';
 import 'NewMedicine.dart';
 
 
@@ -28,7 +30,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
     getMedicineListApi("");
     super.initState();
   }
-
+ bool isSelected = false;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -77,8 +79,6 @@ class _MedicineRecordState extends State<MedicineRecord> {
                 onChanged: (v){
                   getMedicineListApi(v);
                 },
-
-
                 // controller: supplementController,
                 decoration: InputDecoration(
                     suffixIcon:InkWell(
@@ -109,6 +109,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
             ),
 
             Container(
+
               height: MediaQuery.of(context).size.height,
               child: RefreshIndicator(
                 onRefresh: () {
@@ -119,16 +120,45 @@ class _MedicineRecordState extends State<MedicineRecord> {
                 },
                 child: getMedicineModel == null || getMedicineModel == "" ? Center(child: CircularProgressIndicator()):ListView.builder(
                     itemCount: 1,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context,i){
                       return Container(
-                        //height: MediaQuery.of(context).size.height/1.1,
                         child: ListView.builder(
                             shrinkWrap: true,
                             reverse: true,
-                            physics: NeverScrollableScrollPhysics(),
+                           physics: NeverScrollableScrollPhysics(),
                             itemCount: getMedicineModel!.data!.length,
                             itemBuilder: (context,i){
                               return InkWell(
+                                onLongPress: (){
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Delete Medicine Record'),
+                                        content: Text('Are you sure you want to delete?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              // Cancel (close) pop-up
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              deleteApi(getMedicineModel!.data![i].id);
+                                             // Navigator.of(context).pop();
+                                            },
+                                            child: Text('Delete'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                 //
+                                },
                                 onTap: (){
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>NewMedicine(mId: getMedicineModel!.data![i].id,isAdd: true,)));
                                 },
@@ -181,14 +211,21 @@ class _MedicineRecordState extends State<MedicineRecord> {
                                                 Text('${getTranslated(context, "EXPIRY_DATE")}' " :"),
                                                 Text('${getMedicineModel!.data![i].expDate}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
                                               ],
+                                            ),
+                                            InkWell(
+                                              onTap: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsMedicineRecord(mId: getMedicineModel!.data![i].medicineId)));
+                                              },
+                                              child: Container(
+                                                height: 20,
+                                                width: 80,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                  color: colors.primary
+                                                ),
+                                                child: Center(child: Text("Show List",style: TextStyle(color: colors.whiteTemp),)),
+                                              ),
                                             )
-
-                                            // Row(
-                                            //   children: [
-                                            //     Text('${getTranslated(context, "GROWER")}' " :"),
-                                            //     Text('${getMedicineModel!.data![i].pregnent}',style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.bold)),
-                                            //   ],
-                                            // )
                                           ],
                                         ),
                                       ],
@@ -211,7 +248,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
 
   // GetMedicineModel? getMedicineModel;
   // Future<void> getMedicineListApi() async {
-  //   apiBaseHelper.getAPICall(Uri.parse(ApiService.getMedicineList)).then((getData) {
+  //   apiBaseHelper.getAPICall(Uri.parse(ApiService.deleteMedicineApi)).then((getData) {
   //     bool error = getData ['error'];
   //     print('___getData_______${getData}_________');
   //     setState(() {
@@ -231,6 +268,22 @@ class _MedicineRecordState extends State<MedicineRecord> {
   //
   // }
 
+
+  deleteApi(String? ID) async {
+    var parameter = {
+      'id':ID
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.deleteMedicineApi), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+       Fluttertoast.showToast(msg: msg);
+       getMedicineListApi("");
+       Navigator.pop(context);
+
+      });
+
+    });
+  }
 
 
   GetMedicineModel? getMedicineModel;
