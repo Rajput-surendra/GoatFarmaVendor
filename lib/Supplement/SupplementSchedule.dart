@@ -8,15 +8,16 @@ import '../Helper/CustomCard.dart';
 import '../Model/MedicineRecord/Get_medicine_schedule_list.dart';
 import '../Screens/AddMedicineSchedule.dart';
 import '../Utils/Colors.dart';
+import 'AddSupplementSchedule.dart';
 
-class MedicineScheduleRecord extends StatefulWidget {
-  const MedicineScheduleRecord({Key? key}) : super(key: key);
+class SupplementScheduleRecord extends StatefulWidget {
+  const SupplementScheduleRecord({Key? key}) : super(key: key);
 
   @override
-  State<MedicineScheduleRecord> createState() => _MedicineScheduleRecordState();
+  State<SupplementScheduleRecord> createState() => _SupplementScheduleRecordState();
 }
 
-class _MedicineScheduleRecordState extends State<MedicineScheduleRecord> {
+class _SupplementScheduleRecordState extends State<SupplementScheduleRecord> {
   TextEditingController tagId = TextEditingController();
 
   @override
@@ -33,13 +34,13 @@ class _MedicineScheduleRecordState extends State<MedicineScheduleRecord> {
     return Scaffold(
       appBar: customAppBar(
         context: context,
-        text: getTranslated(context, "MEDICINE_SCHEDULE_RECORD"),
+        text: getTranslated(context, "SUPPLEMENT_SCHEDULE_RECORD"),
         isTrue: true,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddMedicineSchedule()));
+              MaterialPageRoute(builder: (context) => AddSupplementSchedule()));
         },
         child: Icon(Icons.add),
         backgroundColor: colors.secondary,

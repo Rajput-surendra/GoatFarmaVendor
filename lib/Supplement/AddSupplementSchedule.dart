@@ -23,14 +23,14 @@ import 'package:http/http.dart' as http;
 
 import '../helper/appbar.dart';
 
-class AddMedicineSchedule extends StatefulWidget {
-  const AddMedicineSchedule({Key? key}) : super(key: key);
+class AddSupplementSchedule extends StatefulWidget {
+  const AddSupplementSchedule({Key? key}) : super(key: key);
 
   @override
-  State<AddMedicineSchedule> createState() => _AddMedicineScheduleState();
+  State<AddSupplementSchedule> createState() => _AddSupplementScheduleState();
 }
 
-class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
+class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
   @override
 
   final _formKey = GlobalKey<FormState>();
@@ -63,7 +63,7 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: customAppBar(text: getTranslated(context, "ADD_MEDICINE_SCHEDULE"), isTrue: true, context: context),
+      appBar: customAppBar(text: getTranslated(context, "ADD_SUPPLEMENT_SCHEDULE"), isTrue: true, context: context),
       body: SingleChildScrollView(
         child:Form(
           key: _formKey,

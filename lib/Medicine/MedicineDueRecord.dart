@@ -24,7 +24,7 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getMedicineListApi();
+    getMedicineListApi("");
   }
   @override
   Widget build(BuildContext context) {
@@ -40,12 +40,13 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
         text: getTranslated(context, "MEDICINE_DUE_RECORD"),
         isTrue: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-             SizedBox(height: 10,),
-            Row(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+        SizedBox(height: 5,),
+          Expanded(
+            flex: 0,
+            child: Row(
               children: [
                 SizedBox(
                   width: 5,
@@ -56,10 +57,10 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Card(
+          ),
+          Expanded(
+            flex: 1,
+            child: Card(
               elevation: 1.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4.0),
@@ -87,296 +88,340 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
                 },
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      currentindex1 = true;
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    getMedicineListApi(getTranslated(context, "MEDICINE"));
+                    currentindex1 = true;
 
-                      if (currentindex1 == true) {
-                        currentindex2 = false;
-                      }
-                    });
-                  },
-                  child: Card(
-                    elevation: 1.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      height: size.height / 18,
-                      width: size.width / 3.7,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: currentindex1 == true
-                            ? colors.primary
-                            : colors.transparent,
-                      ),
-                      child: Center(
-                        child: Text(
-                          getTranslated(context, "MEDICINE"),
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: currentindex1 == true
-                                  ? colors.transparent
-                                  : colors.textColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      currentindex2 = true;
-
-                      if (currentindex2 == true) {
-                        currentindex1 = false;
-                      }
-                    });
-                  },
-                  child: Card(
-                    elevation: 1.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      height: size.height / 18,
-                      width: size.width / 3.7,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: currentindex2 == true
-                            ? colors.primary
-                            : colors.transparent,
-                      ),
-                      child: Center(
-                        child: Text(
-                          getTranslated(context, "VACCINE"),
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: currentindex2 == true
-                                  ? colors.transparent
-                                  : colors.textColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              child: RefreshIndicator(
-                onRefresh: () {
-                  return Future.delayed(
-                    Duration(seconds: 2),
-                        () {
-                          getMedicineListApi();
-                    },
-                  );
+                    if (currentindex1 == true) {
+                      currentindex2 = false;
+                    }
+                  });
                 },
-                child: getMedicineDuaModel == null || getMedicineDuaModel == "" ? Center(child: CircularProgressIndicator()) : getMedicineDuaModel!.data!.isEmpty ? Center(child: Text("No Available Record"))
-                    : ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, i) {
-                      return Container(
-                        //height: MediaQuery.of(context).size.height / 1.0,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: getMedicineDuaModel!.data!.length,
-                            itemBuilder: (context, i) {
-                              return InkWell(
-                                onTap: (){
-                                  //Navigator.push(context, MaterialPageRoute(builder: (context)=>getDeathModel(animalId: breedListModel!.data![i].animalId)));
-                                },
-                                child: Card(
-                                  elevation: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${getTranslated(context, "TAG_ID")}'
-                                                        ": "),
-                                                Text(
-                                                  '${getMedicineDuaModel!.data![i].animalId}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${getTranslated(context, "DATE")}'
-                                                        ": "),
-                                                getMedicineDuaModel!.data![i].date == null ? Text("No Available Age",style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight:
-                                                    FontWeight.bold)):  Text(
-                                                  '${getMedicineDuaModel!.data![i].date}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 2,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${getTranslated(context, "DAYS")}'
-                                                        ": "),
-                                                getMedicineDuaModel!.data![i].day == null ? Text("No available days",style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight:
-                                                    FontWeight.bold)):    Text(
-                                                  '${getMedicineDuaModel!.data![i].day}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${getTranslated(context, "STATUS")}'
-                                                        ": "),
-                                                Text(
-                                                  '${getMedicineDuaModel!.data![i].status}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(height: 2),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
+                child: Card(
+                  elevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    height: size.height / 18,
+                    width: size.width / 3.7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: currentindex1 == true
+                          ? colors.primary
+                          : colors.transparent,
+                    ),
+                    child: Center(
+                      child: Text(
+                        getTranslated(context, "MEDICINE"),
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: currentindex1 == true
+                                ? colors.transparent
+                                : colors.textColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    getMedicineListApi(getTranslated(context, "VACCINE"));
+                    currentindex2 = true;
 
-                                            Row(
-                                              children: [
-                                                // Text(
-                                                //     '${getTranslated(context, "REASON")}'
-                                                //         ": "),
-                                                getMedicineDuaModel!.data![i].direction == null ? Text("No available",style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight:
-                                                    FontWeight.bold)):    Text(
-                                                  '${getMedicineDuaModel!.data![i].direction}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${getTranslated(context, "WEIGHT")}'
-                                                        ": "),
-                                                getMedicineDuaModel!.data![i].weight == null ? Text("No available weight",style: TextStyle(
-                                                    color: colors.blackTemp,
-                                                    fontWeight:
-                                                    FontWeight.bold)):  Text(
-                                                  '${getMedicineDuaModel!.data![i].weight}',
-                                                  style: TextStyle(
-                                                      color: colors.blackTemp,
-                                                      fontWeight:
-                                                      FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                    if (currentindex2 == true) {
+                      currentindex1 = false;
+                    }
+                  });
+                },
+                child: Card(
+                  elevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    height: size.height / 18,
+                    width: size.width / 3.7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: currentindex2 == true
+                          ? colors.primary
+                          : colors.transparent,
+                    ),
+                    child: Center(
+                      child: Text(
+                        getTranslated(context, "VACCINE"),
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: currentindex2 == true
+                                ? colors.transparent
+                                : colors.textColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          getMedicineDuaModel == null ||
+              getMedicineDuaModel == ""
+              ? Center(child: CircularProgressIndicator())
+              : getMedicineDuaModel?.data?.isEmpty ?? false
+              ? Center(child: Text("No Medicine Schedule"))
+              : Container(
+            //height: MediaQuery.of(context).size.height/1.1,
+            child: Expanded(
+              flex: 9,
+              child: RefreshIndicator(
+                onRefresh: (){
+                  return  getMedicineListApi("");
+                },
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    reverse: true,
+                    // physics: NeverScrollableScrollPhysics(),
+                    itemCount: getMedicineDuaModel!.data!.length,
+                    itemBuilder: (context, i) {
+                      return Card(
+                        elevation: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "TAG_ID")}'
+                                              ": "),
+                                      Text(
+                                        '${getMedicineDuaModel!.data![i].animalId}',
+                                        style: TextStyle(
+                                            color: colors.blackTemp,
+                                            fontWeight:
+                                            FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              );
-                            }),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "BREED")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "MEDICINE_NAME")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "DOSE")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "UNIT")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "DIRECTION")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "TIME")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                          '${getTranslated(context, "SAFE_PREGNANT")}'
+                                              " :"),
+                                      Text(
+                                          '${getMedicineDuaModel!.data![i].status}',
+                                          style: TextStyle(
+                                              color: colors.blackTemp,
+                                              fontWeight:
+                                              FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          // getUpdateApi(getMedicineScheduleList!.data![i].id);
+                                        },
+                                        child: Container(
+                                          width: 60,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                              color: colors.primary,
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(10)),
+                                          child: Center(
+                                              child: Text(
+                                                getTranslated(
+                                                    context, "UPDATE"),
+                                                style: TextStyle(
+                                                    color:
+                                                    colors.whiteTemp),
+                                              )),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     }),
               ),
             ),
+          ),
 
-            // Container(
-            //   padding: EdgeInsets.all(10),
-            //
-            //   width: size.width / 1,
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: Column(
-            //     children: [
-            //       CustomCard4(name1: "${getTranslated(context, "TAG_ID")} : F001", name3: "${getTranslated(context, "MEDICINE")}: PPR",
-            //           name4: "${getTranslated(context, "DISEASE")}", name6: "${getTranslated(context, "DUE_ON")}: 25.06.2023", name2: '17/08/2023',name5: '03:50pm',),
-            //       CustomCard4(name1: "${getTranslated(context, "TAG_ID")} : F001", name3: "${getTranslated(context, "MEDICINE")}: PPR",
-            //         name4: "${getTranslated(context, "DISEASE")}", name6: "${getTranslated(context, "DUE_ON")}: 25.06.2023", name2: '17/08/2023',name5: '03:50pm',),CustomCard4(name1: "${getTranslated(context, "TAG_ID")} : F001", name3: "${getTranslated(context, "MEDICINE")}: PPR",
-            //         name4: "${getTranslated(context, "DISEASE")}", name6: "${getTranslated(context, "DUE_ON")}: 25.06.2023", name2: '17/08/2023',name5: '03:50pm',),
-            //     ],
-            //   ),
-            // ),
-
-          ],
-        ),
+        ],
       ),
     );
   }
-
   GetMedicineDuaModel? getMedicineDuaModel;
-  Future<void> getMedicineListApi() async {
-    apiBaseHelper.getAPICall(Uri.parse(ApiService.getMedicineDuaList)).then((getData) {
-      bool error = getData ['error'];
-      print('___getData_______${getData}_________');
-      setState(() {
-        getMedicineDuaModel = GetMedicineDuaModel.fromJson(getData);
-      });
-
-      // if(!error){
-      //
-      //   setState(() {
-      //
-      //   });
-      // }else {
-      //
-      // }
-
+  getMedicineListApi(String? mName) async {
+    var parameter = {
+      'medicine_type':mName.toString()
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineDuaList), parameter).then((getData) {
+      bool error = getData['error'];
+      String msg = getData['message'];
+      if (error ==  false) {
+        setState(() {
+          getMedicineDuaModel = GetMedicineDuaModel.fromJson(getData);
+        });
+      }
     });
-
   }
+
+
+  // Future<void> getMedicineListApi() async {
+  //   apiBaseHelper.getAPICall(Uri.parse(ApiService.getMedicineDuaList)).then((getData) {
+  //     bool error = getData ['error'];
+  //     print('___getData_______${getData}_________');
+  //     setState(() {
+  //       getMedicineDuaModel = GetMedicineDuaModel.fromJson(getData);
+  //     });
+  //
+  //     // if(!error){
+  //     //
+  //     //   setState(() {
+  //     //
+  //     //   });
+  //     // }else {
+  //     //
+  //     // }
+  //
+  //   });
+  //
+  // }
 }

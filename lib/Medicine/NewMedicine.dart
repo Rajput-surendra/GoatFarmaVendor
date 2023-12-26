@@ -41,6 +41,9 @@ final List<String> weightQty = ['1', '2', '3','4','1.2','2.5'];
 final List<String> weightValueitems = ['Canine Flu', 'Anthrax', 'Botulism','Brucellosis'];
 String? typeValueNew;
 
+String? status ;
+List<String> statusitems = ['Kids','Grower','Empty','Matted','Pregnant','Motherhood'];
+
 
 String? unitVNew;
 final List<String> unitType = ['KG', 'Liter', 'No', 'ML', 'G', 'MG'];
@@ -670,149 +673,149 @@ class _NewMedicineState extends State<NewMedicine> {
                           width: 5,
                         ),
                         Text(
-                          getTranslated(context, "CATEGORIES"),
+                          getTranslated(context, "STATUS"),
                           style: TextStyle(color: colors.blacktextColor),
                         ),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      //  Custom_Text(text: '${getTranslated(context, "CATEGORIES")}'),
-                        SizedBox(height: 8,),
-                        Card(
-                          elevation: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<AnimalCatList>(
-                                hint:  Text(getTranslated(context, "SELECT_CATE"),
-                                  style: TextStyle(
-                                      color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
-                                  ),),
-                                value: animalCat,
-                                icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 25,),
-                                style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
-                                underline: Padding(
-                                  padding: const EdgeInsets.only(left: 0,right: 0),
-                                  child: Container(
-
-                                    // height: 2,
-                                    color:  colors.whiteTemp,
-                                  ),
-                                ),
-                                onChanged: (AnimalCatList? value) {
-                                  setState(() {
-                                    animalCat = value!;
-                                    catId =  animalCat?.id;
-
-
-                                    //animalCountApi(animalCat!.id);
-                                  });
-                                },
-                                items: animalCatResponse?.data?.map((items) {
-                                  return DropdownMenuItem(
-                                    value: items,
-                                    child:  Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 2),
-                                          child: Container(
-
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(top: 0),
-                                                child: Text(items.name.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
-                                              )),
-                                        ),
-
-                                      ],
-                                    ),
-                                  );
-                                })
-                                    .toList(),
-                              ),
-
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Card(
-                    //   child: Container(
-                    //     width: size.width / 2.25,
-                    //     height: size.height / 18,
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(5),
-                    //     ),
-                    //     child: DropdownButtonHideUnderline(
-                    //       child: DropdownButton2<String>(
-                    //         isExpanded: true,
-                    //         hint: const Padding(
-                    //           padding: EdgeInsets.only(bottom: 0),
-                    //           child: Text(
-                    //             "ml",
-                    //             style: TextStyle(
-                    //                 color: colors.blackTemp,
-                    //                 fontWeight: FontWeight.normal,
-                    //                 fontSize: 14),
-                    //           ),
-                    //         ),
-                    //         // dropdownColor: colors.primary,
-                    //         value: weightValue,
-                    //         icon: const Padding(
-                    //           padding: EdgeInsets.only(right: 5),
-                    //           child: Icon(
-                    //             Icons.keyboard_arrow_down_rounded,
-                    //             color: colors.secondary,
-                    //             size: 30,
-                    //           ),
-                    //         ),
-                    //         // elevation: 16,
-                    //         style: TextStyle(
-                    //             color: colors.secondary,
-                    //             fontWeight: FontWeight.bold),
-                    //         underline: Padding(
-                    //           padding: const EdgeInsets.only(left: 0, right: 0),
-                    //           child: Container(
-                    //             // height: 2,
-                    //             color: colors.whiteTemp,
-                    //           ),
-                    //         ),
-                    //         onChanged: (String? value) {
-                    //           // This is called when the user selects an item.
-                    //           setState(() {
-                    //             weightValue = value!;
-                    //           });
-                    //         },
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //   //  Custom_Text(text: '${getTranslated(context, "CATEGORIES")}'),
+                    //     SizedBox(height: 8,),
+                    //     Card(
+                    //       elevation: 3,
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(0.0),
+                    //         child: DropdownButtonHideUnderline(
+                    //           child: DropdownButton2<AnimalCatList>(
+                    //             hint:  Text(getTranslated(context, "SELECT_CATE"),
+                    //               style: TextStyle(
+                    //                   color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
+                    //               ),),
+                    //             value: animalCat,
+                    //             icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.secondary,size: 25,),
+                    //             style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
+                    //             underline: Padding(
+                    //               padding: const EdgeInsets.only(left: 0,right: 0),
+                    //               child: Container(
                     //
-                    //         items: weightValueitems
-                    //             .map<DropdownMenuItem<String>>((String value) {
-                    //           return DropdownMenuItem<String>(
-                    //             value: value,
-                    //             child: Column(
-                    //               mainAxisSize: MainAxisSize.min,
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: [
-                    //                 Padding(
-                    //                   padding: const EdgeInsets.all(4.0),
-                    //                   child: Text(
-                    //                     value,
-                    //                     style: const TextStyle(
-                    //                         color: colors.textColor,
-                    //                         fontWeight: FontWeight.normal),
-                    //                   ),
-                    //                 ),
-                    //               ],
+                    //                 // height: 2,
+                    //                 color:  colors.whiteTemp,
+                    //               ),
                     //             ),
-                    //           );
-                    //         }).toList(),
+                    //             onChanged: (AnimalCatList? value) {
+                    //               setState(() {
+                    //                 animalCat = value!;
+                    //                 catId =  animalCat?.id;
+                    //
+                    //
+                    //                 //animalCountApi(animalCat!.id);
+                    //               });
+                    //             },
+                    //             items: animalCatResponse?.data?.map((items) {
+                    //               return DropdownMenuItem(
+                    //                 value: items,
+                    //                 child:  Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.start,
+                    //                   mainAxisAlignment: MainAxisAlignment.center,
+                    //                   children: [
+                    //                     Padding(
+                    //                       padding: const EdgeInsets.only(top: 2),
+                    //                       child: Container(
+                    //
+                    //                           child: Padding(
+                    //                             padding: const EdgeInsets.only(top: 0),
+                    //                             child: Text(items.name.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
+                    //                           )),
+                    //                     ),
+                    //
+                    //                   ],
+                    //                 ),
+                    //               );
+                    //             })
+                    //                 .toList(),
+                    //           ),
+                    //
+                    //         ),
                     //       ),
                     //     ),
-                    //   ),
+                    //   ],
                     // ),
+                    Card(
+                      child: Container(
+                        width: size.width / 2.50,
+                        height: size.height / 15,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Padding(
+                              padding: EdgeInsets.only(bottom: 0),
+                              child: Text(
+                                "Status",
+                                style: TextStyle(
+                                    color: colors.blackTemp,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14),
+                              ),
+                            ),
+                            // dropdownColor: colors.primary,
+                            value: status,
+                            icon: const Padding(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: colors.secondary,
+                                size: 30,
+                              ),
+                            ),
+                            // elevation: 16,
+                            style: TextStyle(
+                                color: colors.secondary,
+                                fontWeight: FontWeight.bold),
+                            underline: Padding(
+                              padding: const EdgeInsets.only(left: 0, right: 0),
+                              child: Container(
+                                // height: 2,
+                                color: colors.whiteTemp,
+                              ),
+                            ),
+                            onChanged: (String? value) {
+                              // This is called when the user selects an item.
+                              setState(() {
+                                status = value!;
+                              });
+                            },
+
+                            items: statusitems
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            color: colors.textColor,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: 10,
                     ),
@@ -958,18 +961,17 @@ class _NewMedicineState extends State<NewMedicine> {
                         ),
                         InkWell(
                           onTap: (){
-                            if(bodyWeightCtr.text.isEmpty||doseC.text.isEmpty||animalCat==null||unitType ==  null) {
+                            if(bodyWeightCtr.text.isEmpty||doseC.text.isEmpty||statusitems==null||unitType ==  null) {
 
                               Fluttertoast.showToast(msg: "Please Fill category, bodyWeight,doseC And Unit ");
                             }else{
                               setState(() {
-                                catNewList.add(catId.toString());
-
+                                catNewList.add(status.toString());
                                 bodyList.add(bodyWeightCtr.text);
                                 doessList.add(doseC.text);
                                 unitList.add(unitVNew ?? '');
                                 Map<String, String> newCat = {
-                                  "cat": "${animalCat?.name}",
+                                  "cat": "${status.toString()}",
                                   "body": "${bodyWeightCtr.text}",
                                   "dose": "${doseC.text}",
                                   "unit": "${unitVNew}",
@@ -1009,7 +1011,7 @@ class _NewMedicineState extends State<NewMedicine> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Text(getTranslated(context, "CATEGORY"),
+                                Text(getTranslated(context, "STATUS"),
                                   style: TextStyle(
                                       fontSize: 14, color: colors.darkBlue),
                                 ),

@@ -19,6 +19,7 @@ import '../Record/ReportScreen.dart';
 import '../Record/SalaryRecordScreen.dart';
 import '../Record/WeightRecord.dart';
 import '../Supplement/SupplementDueRecord.dart';
+import '../Supplement/SupplementSchedule.dart';
 import '../Utils/Colors.dart';
 import '../main.dart';
 import 'BreedScreen.dart';
@@ -679,6 +680,17 @@ List<String> moduleList = [];
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>SupplementRecord()));
+
+                },
+              ),
+              ListTile(
+
+                title: Padding(padding: EdgeInsets.only(right: 40,left: 0),
+                  child: Text(getTranslated(context, "SUPPLEMENT_SCHEDULE_RECORD"),style: TextStyle(color: Colors.black ,fontWeight: FontWeight.w500)),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SupplementScheduleRecord()));
 
                 },
               ),
