@@ -81,7 +81,7 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                           SizedBox(height: 5,),
                           Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)
+                              borderRadius: BorderRadius.circular(5)
                             ),
                             child: Container(
                               height: 55,
@@ -732,7 +732,6 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                                   timeList.add(starTimeC.text);
                                   dayAfterList.add(dayAfter.text);
                                   howManyList.add(howManyAfter.text);
-
                                   Map<String, String> newCat = {
                                     "medicine": "${medicineDataa?.medicineName.toString()}",
                                     "period": "${Period}",
@@ -743,7 +742,6 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                                     "how many days": "${howManyAfter.text}",
                                   };
                                   addTableList.add(newCat);
-
                                      _fromDays.clear();
                                      _tagId.clear();
                                      howManyAfter.clear();
@@ -1040,7 +1038,6 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
       "how_many_days": extractStrings(howManyList.toString()),
     });
     prms ['shadule_data'] = parameter ;
-
     prms["schedule"] = Schedule.toString();
     prms["tag_id"]= _tagId.text;
     prms["status"] = catValueNew.toString();
@@ -1123,22 +1120,23 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2024));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            selectedFromDate = formettedDate;
-                            _fromDays.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedFromDate = formattedDate;
+                            _fromDays.text = formattedDate;
                           });
                         }
                       },
@@ -1395,23 +1393,23 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
     );
 
   }
-  String? medicineId,Id;
-  MedicineDataa? medicineDataa;
-  GetMedicineSingleDataModel? getMedicineModel;
-  getMedicineSingleDataListApi(String? tagId) async {
-    var parameter = {
-      'disease':tagId
-    };
-    print('_____parameter_____${parameter}_________');
-    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineSingleList), parameter).then((getData) {
-      String msg = getData['message'];
-      setState(() {
-        getMedicineModel = GetMedicineSingleDataModel.fromJson(getData);
+    String? medicineId,Id;
+    MedicineDataa? medicineDataa;
+    GetMedicineSingleDataModel? getMedicineModel;
+    getMedicineSingleDataListApi(String? tagId) async {
+      var parameter = {
+        'disease':tagId
+      };
+      print('_____parameter_____${parameter}_________');
+      apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineSingleList), parameter).then((getData) {
+        String msg = getData['message'];
+        setState(() {
+          getMedicineModel = GetMedicineSingleDataModel.fromJson(getData);
+
+        });
 
       });
-
-    });
-  }
+    }
 
 
 

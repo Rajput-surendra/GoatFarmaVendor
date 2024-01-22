@@ -34,7 +34,7 @@ class _MedicineDueRecordState extends State<MedicineDueRecord> {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>MedicineConsume()));
       },
         child: Icon(Icons.add),
-        backgroundColor: colors.secondary,),
+        backgroundColor: colors.primary,),
       appBar: customAppBar(
         context: context,
         text: getTranslated(context, "MEDICINE_DUE_RECORD"),

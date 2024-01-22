@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:madhu_farma/Helper/CustomButton.dart';
 import 'package:madhu_farma/Helper/session.dart';
 import 'package:madhu_farma/Medicine/MedicineConsume.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 import '../ApiPath/Api.dart';
@@ -69,10 +70,19 @@ class _NewAddSupplementState extends State<NewAddSupplement> {
     super.initState();
    getMedicineListApi();
     animalCatApi();
+    getDataProfile();
 
   }
+String? userId;
+  getDataProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId  = prefs.getString('userId');
 
+    setState(() {
 
+    });
+
+  }
 
   GetUpdateModel? getUpdateModel;
   getMedicineListApi() async {
@@ -114,7 +124,7 @@ class _NewAddSupplementState extends State<NewAddSupplement> {
               updateMedicineApi();
             }else{
               if(_formKey.currentState!.validate()){
-                addMedicineApi();
+                addSupplementApi();
               }else if(catValueNew ==  null){
                 Fluttertoast.showToast(msg: "Please select medicine");
               }else if(weightValueNew == null){
@@ -833,7 +843,7 @@ class _NewAddSupplementState extends State<NewAddSupplement> {
                     Btn(
                       onPress: (){
                         if(_formKey.currentState!.validate()){
-                          addMedicineApi();
+                          addSupplementApi();
                         }else if(catValueNew ==  null){
                           Fluttertoast.showToast(msg: "Please select medicine");
                         }else if(weightValueNew == null){
@@ -882,7 +892,7 @@ class _NewAddSupplementState extends State<NewAddSupplement> {
   }
 
 
-  Future<void> addMedicineApi() async {
+  Future<void> addSupplementApi() async {
     setState(() {
       isLoading = true;
     });
@@ -899,12 +909,13 @@ class _NewAddSupplementState extends State<NewAddSupplement> {
     });
     prms ['shadule_data'] = parameter ;
     prms ['supplement_id'] = medicineIdctr.text;
-    prms ['disease'] = weightValueNew.toString();
-    prms ['supplement_id'] = medicineNameCtr.text;
+    //prms ['disease'] = weightValueNew.toString();
+    prms ['supplement_name'] = medicineNameCtr.text;
     prms ['unit'] = unitVNew1.toString();
     prms ['qty'] = qtyCtr.text;
     prms ['safe_for_pregnent'] = male.toString();
     prms ['description'] = directionCtr.text;
+    prms ['user_id'] = userId.toString();
     var response = await http.post(Uri.parse(ApiService.addSupplement), body:prms);
     Fluttertoast.showToast(msg: "Add Medicine Schedule Successfully");
     catValueNew == null;

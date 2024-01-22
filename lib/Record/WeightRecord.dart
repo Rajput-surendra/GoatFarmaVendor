@@ -37,7 +37,7 @@ class _WeightRecordState extends State<WeightRecord> {
 
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.darkBlue,
+        backgroundColor: colors.primary ,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 

@@ -189,7 +189,7 @@ class _MilkRecordState extends State<MilkRecord> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AddMilkRecord()));

@@ -82,7 +82,7 @@ class _AnimalRecordState extends State<AnimalRecord> {
            });
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 

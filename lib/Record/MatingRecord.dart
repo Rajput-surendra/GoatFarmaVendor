@@ -40,7 +40,7 @@ class _MatingRecordState extends State<MatingRecord> {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewMating()));
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.darkBlue,
+        backgroundColor: colors.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 

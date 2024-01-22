@@ -297,7 +297,7 @@ class _SupplementDueRecordState extends State<SupplementDueRecord> {
           // For example, navigate to a new screen or show a dialog.
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.darkBlue,
+        backgroundColor: colors.primary,
       ),
     );
   }

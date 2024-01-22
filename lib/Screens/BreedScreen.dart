@@ -186,7 +186,7 @@ class _BreedScreenState extends State<BreedScreen> {
         floatingActionButton: new FloatingActionButton(
             elevation: 0.0,
             child: new Icon(Icons.add),
-            backgroundColor: colors.secondary,
+            backgroundColor: colors.primary,
             onPressed: (){
                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBreed()));
             }

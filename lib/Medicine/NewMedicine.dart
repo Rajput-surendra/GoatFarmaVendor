@@ -457,72 +457,76 @@ class _NewMedicineState extends State<NewMedicine> {
                         ),
                         SizedBox(height: 2,),
                         GestureDetector(
-                            onTap: () async {
-                              DateTime? datePicked = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2024));
-                              if (datePicked != null) {
-                                print(
-                                    'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                String formettedDate =
-                                DateFormat('dd-MM-yyyy').format(datePicked);
-                                setState(() {
-                                  selectedDeliveryDate = formettedDate;
+                          onTap: () async {
+                            DateTime currentDate = DateTime.now();
+                            DateTime lastAllowedDate = DateTime(2030);
 
-                                });
-                              }
-                            },
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              elevation: 2,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                height: 50,
-                                width: MediaQuery.of(context).size.width/2.3,
+                            DateTime? datePicked = await showDatePicker(
+                              context: context,
+                              initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                              firstDate: DateTime.now(),
+                              lastDate: lastAllowedDate,
+                            );
 
-                                child:  TextFormField(
-                                  readOnly: true,
-                                  onTap: () async{
-                                    DateTime? datePicked = await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2024));
-                                    if (datePicked != null) {
-                                      print(
-                                          'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                      String formettedDate =
-                                      DateFormat('dd-MM-yyyy').format(datePicked);
-                                      setState(() {
-                                        selectedDeliveryDate= formettedDate;
-                                        selectDeliveryDateCtr.text =  formettedDate;
-                                      });
-                                    }
-                                  },
-                                  controller: selectDeliveryDateCtr,
-                                  decoration: InputDecoration(
-                                    border:InputBorder.none,
-                                    contentPadding: EdgeInsets.all(10),
-                                    hintText: 'dd-mm-yyyy',
-                                    // border: OutlineInputBorder(
-                                    //     borderRadius: BorderRadius.circular(10)),
-                                  ),
-                                  validator: (value){
-                                    if(value==null||value.isEmpty)
-                                      return "Please Enter delivery Date";
-                                    return null;
-                                  },
-                                ),
+                            if (datePicked != null) {
+                              print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                              String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
+                              setState(() {
+                                selectedDeliveryDate = formattedDate;
+                                selectDeliveryDateCtr.text = formattedDate;
+                              });
+                            }
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 2,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
                               ),
-                            )
+                              height: 50,
+                              width: MediaQuery.of(context).size.width / 2.3,
+                              child: TextFormField(
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime currentDate = DateTime.now();
+                                  DateTime lastAllowedDate = DateTime(2030);
+
+                                  DateTime? datePicked = await showDatePicker(
+                                    context: context,
+                                    initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                                    firstDate: DateTime.now()  ,
+                                    lastDate: lastAllowedDate,
+                                  );
+
+                                  if (datePicked != null) {
+                                    print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                                    String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
+                                    setState(() {
+                                      selectedDeliveryDate = formattedDate;
+                                      selectDeliveryDateCtr.text = formattedDate;
+                                    });
+                                  }
+                                },
+                                controller: selectDeliveryDateCtr,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(10),
+                                  hintText: 'dd-mm-yyyy',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty)
+                                    return "Please Enter delivery Date";
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
                         ),
+
                       ],
                     ),
                     SizedBox(

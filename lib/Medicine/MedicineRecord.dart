@@ -43,7 +43,7 @@ class _MedicineRecordState extends State<MedicineRecord> {
           // For example, navigate to a new screen or show a dialog.
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       appBar: customAppBar(

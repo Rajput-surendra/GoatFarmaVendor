@@ -134,10 +134,12 @@ class _NewPurchaseState extends State<NewPurchase> {
 
                        ),
                        TextFormCard(
-                         name:"${getTranslated(context, "MOBILE_NO.")}" ,
+                         maxLength: 10,
+                         textInputType: TextInputType.number,
+                         name:"${getTranslated(context, "MOBILE_NO")}" ,
                          width: MediaQuery.of(context).size.width/2.3,
                          controller: mobileController,
-                         validString:getTranslated(context, "MOBILE_NO."),
+                         validString:getTranslated(context, "MOBILE_NO"),
                        ),
                      ],
                    ),

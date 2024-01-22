@@ -19,6 +19,9 @@ class ApiService {
   static const String addAnimal = baseUrl+'add_animal';
   static const String animalList = baseUrl+'animal_list';
   static const String  addWeight = baseUrl+'add_weight';
+  static const String  matingAnimalDate = baseUrl+'meating_animal_data';
+ static const String  checkBreedMating = baseUrl+'check_breed';
+ static const String  addMating = baseUrl+'add_meating';
   static const String  getWeight = baseUrl+'get_weight';
   static const String  getLatWeight = baseUrl+'get_last_weight';
   static const String  addMilk = baseUrl+'add_milk';
@@ -30,9 +33,9 @@ class ApiService {
   static const String  punchIn = baseUrl+'punch_in';
   static const String  punchOut = baseUrl+'punch_out';
   static const String  checkStatus = baseUrl+'check_attendance';
-  static const String  matingAnimalDate = baseUrl+'meating_animal_data';
-  static const String  addMating = baseUrl+'add_meating';
-  static const String  checkBreedMating = baseUrl+'check_breed';
+  static const String  matiating = baseUrl+'add_meating';
+ static const String  checngAnimalDate = baseUrl+'meating_animal_data';
+  static const String  addMkBreedMating = baseUrl+'check_breed';
   static const String  getMatingList = baseUrl+'meating_list';
   static const String  getSupplementList = baseUrl+'suplimet_list';
   static const String  ADDMedicine = baseUrl+'add_medicine';
@@ -51,6 +54,7 @@ class ApiService {
   static const String  getBreedingList = baseUrl+'get_breed_animal';
   static const String  getDateList = baseUrl+'age_calculate';
   static const String  addSupplement = baseUrl+'add_supplement';
+  static const String  getSupplementDetails = baseUrl+'supliment_data';
   static const String  getSupplementDueRecord = baseUrl+'supliment_due';
 }
 

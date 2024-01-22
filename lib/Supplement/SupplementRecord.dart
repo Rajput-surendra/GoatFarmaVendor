@@ -6,9 +6,11 @@ import 'package:madhu_farma/Helper/session.dart';
 import '../ApiPath/Api.dart';
 import '../Helper/Appbar.dart';
 import '../Helper/CustomCard.dart';
+import '../Medicine/DetailsMedicineRecord.dart';
 import '../Model/Supplement/get_supplement_,model.dart';
 import '../Utils/Colors.dart';
 import 'AddSupplement.dart';
+import 'DetailsSupplementRecord.dart';
 import 'NewAddSupplement.dart';
 
 
@@ -57,33 +59,92 @@ class _SupplementRecordState extends State<SupplementRecord> {
                       shrinkWrap: true,
                       reverse: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: getSupplementModel!.breed!.length,
+                      itemCount: getSupplementModel?.breed?.length ?? 0,
                       itemBuilder: (context, i) {
                         return
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                             child: Column(
                               children: [
-                                Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("${getSupplementModel!.breed![i].title}"),
-                                        Row(
-                                          children: [
-                                            Text("Stock: "),
-                                            SizedBox(width: 2,),
-                                            Row(
-                                              children: [
-                                                Text("${getSupplementModel!.breed![i].stock}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.w500),),
-                                                Text("${getSupplementModel!.breed![i].unit}",style: TextStyle(color: colors.blackTemp,fontWeight: FontWeight.w500),),
-                                              ],
-                                            )
+                                InkWell(
+                                  onLongPress: (){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Delete Supplement Record',style: TextStyle(fontSize: 18),),
+                                          content: Text('Are you sure you want to delete?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                // Cancel (close) pop-up
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                deleteApi(getSupplementModel!.breed![i].id);
+                                                // Navigator.of(context).pop();
+                                              },
+                                              child: Text('Delete'),
+                                            ),
                                           ],
-                                        )
-                                      ],
+                                        );
+                                      },
+                                    );
+                                    //
+                                  },
+                                  onTap: (){
+
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                      child: Column(
+
+                                        children: [
+                                         Row(
+                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                           children: [
+                                             Text(getTranslated(context, "SUPPLEMENT_NAME")),
+                                             Text("${getSupplementModel?.breed?[i].supplementName}",style: TextStyle(
+                                               color: colors.blackTemp,fontWeight: FontWeight.bold
+                                             ),),
+
+                                           ],
+                                         ),
+                                         SizedBox(height: 5,),
+                                         Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(getTranslated(context, "STOCK")),
+                                              Text("${getSupplementModel?.breed?[i].qty} ${getSupplementModel?.breed?[i].unit}",style: TextStyle(
+                                              color: colors.blackTemp,fontWeight: FontWeight.bold
+                                              ),),
+
+                                            ],
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: InkWell(
+                                              onTap: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsSupplementRecord(mId: getSupplementModel?.breed?[i].id)));
+                                              },
+                                              child: Container(
+                                                height: 20,
+                                                width: 80,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(5),
+                                                    color: colors.primary
+                                                ),
+                                                child: Center(child: Text("Show List",style: TextStyle(color: colors.whiteTemp),)),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 )
@@ -115,7 +176,7 @@ class _SupplementRecordState extends State<SupplementRecord> {
 
 
       floatingActionButton: FloatingActionButton(
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>NewAddSupplement())).then((value) => getSupplementApi());
         },
@@ -140,4 +201,20 @@ class _SupplementRecordState extends State<SupplementRecord> {
 
   }
 
+
+  deleteApi(String? ID) async {
+    var parameter = {
+      'id':ID
+    };
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.deleteMedicineApi), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        Fluttertoast.showToast(msg: msg);
+        getSupplementApi();
+        Navigator.pop(context);
+
+      });
+
+    });
+  }
 }

@@ -5,8 +5,9 @@ import '../Helper/session.dart';
 import '../Utils/Colors.dart';
 
 class TextFormCard extends StatefulWidget {
-   TextFormCard({Key? key, required this.name, required this.width,this.hint, this.Icon, this.controller, this.validString,this.onTap,this.readOnly,this.textInputType}) : super(key: key);
+   TextFormCard({Key? key, required this.name, required this.width,this.hint, this.Icon,this.maxLength, this.controller, this.validString,this.onTap,this.readOnly,this.textInputType}) : super(key: key);
   final String name;
+  final int? maxLength;
   final double width;
   final String? hint;
   IconData? Icon;
@@ -14,6 +15,7 @@ class TextFormCard extends StatefulWidget {
   final String? validString;
    VoidCallback? onTap;
    bool? readOnly;
+
    TextInputType ? textInputType;
 
 
@@ -48,6 +50,7 @@ class _TextFormCardState extends State<TextFormCard> {
               color: Colors.white,
               alignment: Alignment.center,
               child:TextFormField(
+                maxLength: 10,
                 onTap:widget.onTap,
                 readOnly: widget.readOnly ?? false,
                 // maxLines: 4,

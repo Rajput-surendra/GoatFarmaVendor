@@ -81,7 +81,7 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                           SizedBox(height: 5,),
                           Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)
+                              borderRadius: BorderRadius.circular(5)
                             ),
                             child: Container(
                               height: 55,
@@ -273,7 +273,7 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                                     padding: EdgeInsets.only(right: 5),
                                     child: Icon(
                                       Icons.keyboard_arrow_down_rounded,
-                                      color: colors.secondary,
+                                      color: colors.black54,
                                       size: 30,
                                     ),
                                   ),
@@ -345,7 +345,7 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                                         color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
                                     ),),
                                   value: medicineDataa,
-                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.black54,size: 25,),
+                                  icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.black54,size: 30,),
                                   style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
                                   underline: Padding(
                                     padding: const EdgeInsets.only(left: 0,right: 0),
@@ -1095,20 +1095,25 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
             Custom_Text(text: '${getTranslated(context, "FROM_DAYS")}'),
             SizedBox(height: 8,),
             GestureDetector(
-                onTap: () async {
-                  DateTime? datePicked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2024));
-                  if (datePicked != null) {
-                    print(
-                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                    String formettedDate =
-                    DateFormat('dd-MM-yyyy').format(datePicked);
-                    setState(() {
-                      selectedFromDate = formettedDate;
 
+
+                onTap: () async {
+                  DateTime currentDate = DateTime.now();
+                  DateTime lastAllowedDate = DateTime(2030);
+
+                  DateTime? datePicked = await showDatePicker(
+                    context: context,
+                    initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: lastAllowedDate,
+                  );
+
+                  if (datePicked != null) {
+                    print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
+                    setState(() {
+                      selectedFromDate = formattedDate;
+                      _fromDays.text = formattedDate;
                     });
                   }
                 },
@@ -1123,25 +1128,28 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
 
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2024));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            selectedFromDate = formettedDate;
-                            _fromDays.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedFromDate = formattedDate;
+                           _fromDays.text = formattedDate;
                           });
                         }
                       },
+
+
                       controller: _fromDays,
                       decoration: InputDecoration(
                         border:InputBorder.none,
@@ -1169,19 +1177,25 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
             Custom_Text(text: '${getTranslated(context, "TO_DAYS")}'),
             SizedBox(height: 8,),
             GestureDetector(
+
+
                 onTap: () async {
+                  DateTime currentDate = DateTime.now();
+                  DateTime lastAllowedDate = DateTime(2030);
+
                   DateTime? datePicked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2030));
+                    context: context,
+                    initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: lastAllowedDate,
+                  );
+
                   if (datePicked != null) {
-                    print(
-                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                    String formettedDate =
-                    DateFormat('dd-MM-yyyy').format(datePicked);
+                    print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                     setState(() {
-                      selectedToDate = formettedDate;
+                      selectedToDate = formattedDate;
+                      _toDays.text = formattedDate;
 
                     });
                   }
@@ -1197,22 +1211,23 @@ class _AddMedicineScheduleState extends State<AddMedicineSchedule> {
                     ),
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2030));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            selectedToDate = formettedDate;
-                            _toDays.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedToDate = formattedDate;
+                            _toDays.text = formattedDate;
                           });
                         }
                       },

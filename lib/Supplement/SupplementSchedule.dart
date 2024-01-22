@@ -43,7 +43,7 @@ class _SupplementScheduleRecordState extends State<SupplementScheduleRecord> {
               MaterialPageRoute(builder: (context) => AddSupplementSchedule()));
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
       ),
       body: Column(
         children: [

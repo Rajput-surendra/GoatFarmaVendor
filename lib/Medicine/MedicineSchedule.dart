@@ -42,7 +42,7 @@ class _MedicineScheduleRecordState extends State<MedicineScheduleRecord> {
               MaterialPageRoute(builder: (context) => AddMedicineSchedule()));
         },
         child: Icon(Icons.add),
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
       ),
       body: Column(
         children: [

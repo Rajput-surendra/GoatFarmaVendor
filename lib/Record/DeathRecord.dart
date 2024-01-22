@@ -223,7 +223,7 @@ class _DeathRecordState extends State<DeathRecord> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary ,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>AddDeathRecord(breed: "Goat", age: "10", weight: "50")));
         },
