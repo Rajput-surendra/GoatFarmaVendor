@@ -49,7 +49,7 @@ class _SupplementRecordState extends State<SupplementRecord> {
             );
           },
           child: getSupplementModel == null || getSupplementModel == ""
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator()): getSupplementModel?.breed?.length == 0 ? Center(child: Text("No Supplement Record"))
               : ListView.builder(
               itemCount: 1,
               itemBuilder: (context, i) {
@@ -130,7 +130,7 @@ class _SupplementRecordState extends State<SupplementRecord> {
                                             alignment: Alignment.topRight,
                                             child: InkWell(
                                               onTap: (){
-                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsSupplementRecord(mId: getSupplementModel?.breed?[i].id)));
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsSupplementRecord(mId: getSupplementModel?.breed?[i].supplementId)));
                                               },
                                               child: Container(
                                                 height: 20,
@@ -206,7 +206,8 @@ class _SupplementRecordState extends State<SupplementRecord> {
     var parameter = {
       'id':ID
     };
-    apiBaseHelper.postAPICall(Uri.parse(ApiService.deleteMedicineApi), parameter).then((getData) {
+    print('____Som______${parameter}_________');
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.deleteSupplementApi), parameter).then((getData) {
       String msg = getData['message'];
       setState(() {
         Fluttertoast.showToast(msg: msg);

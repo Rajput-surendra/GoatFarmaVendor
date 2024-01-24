@@ -16,12 +16,15 @@ import '../Model/MedicineRecord/Get_medicine_model.dart';
 import '../Model/MedicineRecord/Get_medicine_single_data_model.dart';
 import '../Model/MedicineRecord/Get_single_data_medicine_model.dart';
 import '../Model/MilkRecord/milk_filtter_model.dart';
+import '../Model/Supplement/Supplement_name_list_model.dart';
+import '../Model/Supplement/get_supplement_,model.dart';
 import '../Model/animal_cat_model_response.dart';
 import '../Scanner/scanner_view.dart';
 import '../Utils/Colors.dart';
 import 'package:http/http.dart' as http;
 
 import '../helper/appbar.dart';
+import 'SupplementSchedule.dart';
 
 class AddSupplementSchedule extends StatefulWidget {
   const AddSupplementSchedule({Key? key}) : super(key: key);
@@ -41,6 +44,7 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
    final starTimeC = TextEditingController();
  final dayAfter = TextEditingController();
  final howManyAfter = TextEditingController();
+ final khurak = TextEditingController();
 
 
   String? Schedule;
@@ -52,13 +56,16 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
 
   String? catValueNew ;
-  List<String> catValueitems = ['Kids','Grower','Empty','Matted','Pregnant','Motherhood'];
+  List<String> catValueitems = ['All','Kids','Grower','Empty','Matted','Pregnant','Motherhood'];
+
+  String? unitVNew;
+  final List<String> unitType = ['KG', 'Liter', 'No', 'ML', 'G', 'MG'];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    animalCatApi();
-    getAnimalFilterApi("");
+   // getAnimalFilterApi("");
+    getSupplementApi();
   }
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,280 +78,371 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
             child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${getTranslated(context, "SCHEDULE")}',style: TextStyle(color: colors.black54),),
-                          SizedBox(height: 5,),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)
-                            ),
-                            child: Container(
-                              height: 55,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: colors.whiteTemp
-                              ),
-
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  //dropdownMaxHeight: 300,
-                                  hint: Text(getTranslated(context, "SCHEDULE"),
-                                    style: TextStyle(
-                                        color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
-                                    ),),
-                                  // dropdownColor: colors.primary,
-                                  value: Schedule,
-                                  icon:  const Padding(
-                                    padding: EdgeInsets.only(bottom: 0,left: 10),
-                                    child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.black54,size: 30,),
-                                  ),
-                                  // elevation: 16,
-                                  style:  TextStyle(color: colors.black54,fontWeight: FontWeight.bold),
-                                  underline: Container(
-                                    // height: 2,
-                                    color:  colors.whiteTemp,
-                                  ),
-                                  onChanged: (String? value) {
-                                    // This is called when the user selects an item.
-                                    setState(() {
-                                      Schedule = value!;
-
-                                    });
-                                  },
-                                  items: ['Individual','Status']
-                                      .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-
-                                      child:
-                                      Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
-                                    );
-
-                                  }).toList(),
-
-                                ),
-
-                              ),
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 5,),
-                   // getViewOnSelectedValue(),
-                  ],
-                ),
-               SizedBox(height: 15,),
-                getViewOnSelectedValue(),
-                SizedBox(height: 15,),
                 // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
-                //     Text(' Tag ID:f002',style: TextStyle(fontSize:12),),
-                //     Text('Breed:Sirohi',style: TextStyle(fontSize:12)),
-                //     Text('Age:4 (Month)',style: TextStyle(fontSize:12)),
-                //     Text('Weight: 35 kg ',style: TextStyle(fontSize:12)),
+                //     Expanded(
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text('${getTranslated(context, "SCHEDULE")}',style: TextStyle(color: colors.black54),),
+                //           SizedBox(height: 5,),
+                //           Card(
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(5)
+                //             ),
+                //             child: Container(
+                //               height: 55,
+                //               width: double.infinity,
+                //               decoration: BoxDecoration(
+                //                   borderRadius: BorderRadius.circular(5),
+                //                   color: colors.whiteTemp
+                //               ),
+                //
+                //               child: DropdownButtonHideUnderline(
+                //                 child: DropdownButton2<String>(
+                //                   //dropdownMaxHeight: 300,
+                //                   hint: Text(getTranslated(context, "SCHEDULE"),
+                //                     style: TextStyle(
+                //                         color: colors.black54,fontWeight: FontWeight.normal,fontSize: 14
+                //                     ),),
+                //                   // dropdownColor: colors.primary,
+                //                   value: Schedule,
+                //                   icon:  const Padding(
+                //                     padding: EdgeInsets.only(bottom: 0,left: 10),
+                //                     child: Icon(Icons.keyboard_arrow_down_rounded,  color: colors.black54,size: 30,),
+                //                   ),
+                //                   // elevation: 16,
+                //                   style:  TextStyle(color: colors.black54,fontWeight: FontWeight.bold),
+                //                   underline: Container(
+                //                     // height: 2,
+                //                     color:  colors.whiteTemp,
+                //                   ),
+                //                   onChanged: (String? value) {
+                //                     // This is called when the user selects an item.
+                //                     setState(() {
+                //                       Schedule = value!;
+                //
+                //                     });
+                //                   },
+                //                   items: ['Individual','Status']
+                //                       .map<DropdownMenuItem<String>>((String value) {
+                //                     return DropdownMenuItem<String>(
+                //                       value: value,
+                //
+                //                       child:
+                //                       Text(value,style: const TextStyle(color: colors.black54,fontWeight: FontWeight.normal),),
+                //                     );
+                //
+                //                   }).toList(),
+                //
+                //                 ),
+                //
+                //               ),
+                //             ),
+                //           ),
+                //
+                //         ],
+                //       ),
+                //     ),
+                //     SizedBox(width: 5,),
+                //    // getViewOnSelectedValue(),
                 //   ],
                 // ),
-                milkFiltterModel?.data?.weight == null ? Center(child: Text("No record found!!!")):   Card(
-                    child:Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "${getTranslated(context, "TAG_ID" )}" ": ",
-                                  ),
-                                  Text(
-                                    "${milkFiltterModel!.data!.tagId}",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: colors.textColor,
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "${getTranslated(context, "BREED")}"": ",),
-                                  Text(
-                                    "${milkFiltterModel!.data!.breed}",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: colors.textColor,
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "${getTranslated(context, "AGE")}"": ",),
-                                  Text(
-                                    "${milkFiltterModel!.data!.age}",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: colors.textColor,
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "${getTranslated(context, "WEIGHT")}"": ",),
-                                  Text(
-                                    "${milkFiltterModel!.data!.weight}",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: colors.textColor,
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-
-                ),
+                onStatusView(),
+               // SizedBox(height: 15,),
+               //  getViewOnSelectedValue(),
                 SizedBox(height: 15,),
-               
+
+                // milkFiltterModel?.data?.weight == null ? Center(child: Text("No record found!!!")):   Card(
+                //     child:Padding(
+                //       padding: const EdgeInsets.all(8.0),
+                //       child: Column(
+                //         children: [
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Row(
+                //                 children: [
+                //                   Text(
+                //                     "${getTranslated(context, "TAG_ID" )}" ": ",
+                //                   ),
+                //                   Text(
+                //                     "${milkFiltterModel!.data!.tagId}",
+                //                     style: TextStyle(
+                //                         fontSize: 12,
+                //                         color: colors.textColor,
+                //                         fontWeight: FontWeight.w500),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //                 ],
+                //               ),
+                //               Row(
+                //                 children: [
+                //                   Text(
+                //                     "${getTranslated(context, "BREED")}"": ",),
+                //                   Text(
+                //                     "${milkFiltterModel!.data!.breed}",
+                //                     style: TextStyle(
+                //                         fontSize: 12,
+                //                         color: colors.textColor,
+                //                         fontWeight: FontWeight.w500),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //                 ],
+                //               ),
+                //             ],
+                //           ),
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Row(
+                //                 children: [
+                //                   Text(
+                //                     "${getTranslated(context, "AGE")}"": ",),
+                //                   Text(
+                //                     "${milkFiltterModel!.data!.age}",
+                //                     style: TextStyle(
+                //                         fontSize: 12,
+                //                         color: colors.textColor,
+                //                         fontWeight: FontWeight.w500),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //                 ],
+                //               ),
+                //               Row(
+                //                 children: [
+                //                   Text(
+                //                     "${getTranslated(context, "WEIGHT")}"": ",),
+                //                   Text(
+                //                     "${milkFiltterModel!.data!.weight}",
+                //                     style: TextStyle(
+                //                         fontSize: 12,
+                //                         color: colors.textColor,
+                //                         fontWeight: FontWeight.w500),
+                //                     overflow: TextOverflow.ellipsis,
+                //                   ),
+                //                 ],
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //     )
+                //
+                // ),
+                // SizedBox(height: 15,),
+              //   Row(
+              //   children: [
+              //     Expanded(
+              //       child: Card(
+              //         elevation: 1,
+              //         child: Container(
+              //             // width: size.width / 2.7,
+              //             decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(5),
+              //             ),
+              //             child: TextFormField(
+              //               controller: khurak,
+              //              decoration: InputDecoration(
+              //                contentPadding: EdgeInsets.only(left: 10),
+              //                hintText: "Khurak",
+              //                border: InputBorder.none
+              //              ),
+              //             )
+              //         ),
+              //       ),
+              //     ),
+              //     Expanded(
+              //       child: Card(
+              //         child: Container(
+              //           // width: size.width / 2.7,
+              //           decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(5),
+              //           ),
+              //           child: DropdownButtonHideUnderline(
+              //             child: DropdownButton2<String>(
+              //               isExpanded: true,
+              //               hint: const Padding(
+              //                 padding: EdgeInsets.only(bottom: 0),
+              //                 child: Text(
+              //                   "Unit",
+              //                   style: TextStyle(
+              //                       color: colors.blackTemp,
+              //                       fontWeight: FontWeight.normal,
+              //                       fontSize: 14),
+              //                 ),
+              //               ),
+              //               // dropdownColor: colors.primary,
+              //               value: unitVNew,
+              //               icon: const Padding(
+              //                 padding: EdgeInsets.only(right: 5),
+              //                 child: Icon(
+              //                   Icons.keyboard_arrow_down_rounded,
+              //                   color: colors.black54,
+              //                   size: 30,
+              //                 ),
+              //               ),
+              //               // elevation: 16,
+              //               style: TextStyle(
+              //                   color: colors.secondary,
+              //                   fontWeight: FontWeight.bold),
+              //               underline: Padding(
+              //                 padding: const EdgeInsets.only(left: 0, right: 0),
+              //                 child: Container(
+              //                   // height: 2,
+              //                   color: colors.whiteTemp,
+              //                 ),
+              //               ),
+              //               onChanged: (String? value) {
+              //                 // This is called when the user selects an item.
+              //                 setState(() {
+              //                   unitVNew = value!;
+              //                 });
+              //               },
+              //
+              //               items: unitType
+              //                   .map<DropdownMenuItem<String>>((String value) {
+              //                 return DropdownMenuItem<String>(
+              //                   value: value,
+              //                   child: Column(
+              //                     mainAxisSize: MainAxisSize.min,
+              //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //                     mainAxisAlignment: MainAxisAlignment.center,
+              //                     children: [
+              //                       Padding(
+              //                         padding: const EdgeInsets.all(4.0),
+              //                         child: Text(
+              //                           value,
+              //                           style: const TextStyle(
+              //                               color: colors.textColor,
+              //                               fontWeight: FontWeight.normal),
+              //                         ),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 );
+              //               }).toList(),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+                SizedBox(height: 5,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child:Column(crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(width: 5,),
-                              Text(
-                                getTranslated(context, "DISEASE")
-                                ,style: TextStyle(color: colors.blacktextColor),),
-                            ],
-                          ),
-
-                          Card(
-                            child: Container(
-                              width: size.width / 2.3,
-                              // height: size.height / 15,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Padding(
-                                    padding: EdgeInsets.only(bottom: 0),
-                                    child: Text(
-                                      "",
-                                      style: TextStyle(
-                                          color: colors.blackTemp,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 14),
-                                    ),
-                                  ),
-                                  // dropdownColor: colors.primary,
-                                  value: weightValueNew,
-                                  icon: const Padding(
-                                    padding: EdgeInsets.only(right: 5),
-                                    child: Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      color: colors.secondary,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  // elevation: 16,
-                                  style: TextStyle(
-                                      color: colors.secondary,
-                                      fontWeight: FontWeight.bold),
-                                  underline: Padding(
-                                    padding: const EdgeInsets.only(left: 0, right: 0),
-                                    child: Container(
-                                      // height: 2,
-                                      color: colors.whiteTemp,
-                                    ),
-                                  ),
-                                  onChanged: (String? value) {
-                                    // This is called when the user selects an item.
-                                    setState(() {
-                                      weightValueNew = value!;
-                                      getMedicineSingleDataListApi(weightValueNew);
-                                    });
-                                  },
-
-                                  items: weightValueitems
-                                      .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Text(
-                                              value,
-                                              style: const TextStyle(
-                                                  color: colors.textColor,
-                                                  fontWeight: FontWeight.normal),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
+                    // Expanded(
+                    //   child:Column(crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           SizedBox(width: 5,),
+                    //           Text(
+                    //             getTranslated(context, "DISEASE")
+                    //             ,style: TextStyle(color: colors.blacktextColor),),
+                    //         ],
+                    //       ),
+                    //
+                    //       Card(
+                    //         child: Container(
+                    //           width: size.width / 2.3,
+                    //           // height: size.height / 15,
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: DropdownButtonHideUnderline(
+                    //             child: DropdownButton2<String>(
+                    //               isExpanded: true,
+                    //               hint: const Padding(
+                    //                 padding: EdgeInsets.only(bottom: 0),
+                    //                 child: Text(
+                    //                   "",
+                    //                   style: TextStyle(
+                    //                       color: colors.blackTemp,
+                    //                       fontWeight: FontWeight.normal,
+                    //                       fontSize: 14),
+                    //                 ),
+                    //               ),
+                    //               // dropdownColor: colors.primary,
+                    //               value: weightValueNew,
+                    //               icon: const Padding(
+                    //                 padding: EdgeInsets.only(right: 5),
+                    //                 child: Icon(
+                    //                   Icons.keyboard_arrow_down_rounded,
+                    //                   color: colors.secondary,
+                    //                   size: 30,
+                    //                 ),
+                    //               ),
+                    //               // elevation: 16,
+                    //               style: TextStyle(
+                    //                   color: colors.secondary,
+                    //                   fontWeight: FontWeight.bold),
+                    //               underline: Padding(
+                    //                 padding: const EdgeInsets.only(left: 0, right: 0),
+                    //                 child: Container(
+                    //                   // height: 2,
+                    //                   color: colors.whiteTemp,
+                    //                 ),
+                    //               ),
+                    //               onChanged: (String? value) {
+                    //                 // This is called when the user selects an item.
+                    //                 setState(() {
+                    //                   weightValueNew = value!;
+                    //                   getMedicineSingleDataListApi(weightValueNew);
+                    //                 });
+                    //               },
+                    //
+                    //               items: weightValueitems
+                    //                   .map<DropdownMenuItem<String>>((String value) {
+                    //                 return DropdownMenuItem<String>(
+                    //                   value: value,
+                    //                   child: Column(
+                    //                     mainAxisSize: MainAxisSize.min,
+                    //                     crossAxisAlignment: CrossAxisAlignment.start,
+                    //                     mainAxisAlignment: MainAxisAlignment.center,
+                    //                     children: [
+                    //                       Padding(
+                    //                         padding: const EdgeInsets.all(4.0),
+                    //                         child: Text(
+                    //                           value,
+                    //                           style: const TextStyle(
+                    //                               color: colors.textColor,
+                    //                               fontWeight: FontWeight.normal),
+                    //                         ),
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                 );
+                    //               }).toList(),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //
+                    //     ],
+                    //   ),
+                    // ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            getTranslated(context, "MEDICINE"),
+                            getTranslated(context, "SUPPLEMENT_NAME"),
                             style: TextStyle(color: colors.blacktextColor),
                           ),
                           Card(
-                            elevation: 3,
+                            elevation: 1,
                             child: Container(
-                              width: 150,
+                              width: double.infinity,
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton2<MedicineDataa>(
-                                  hint:  Text(getTranslated(context, "MEDICINE_NAME"),
+                                child: DropdownButton2<SupplentName>(
+                                  hint:  Text(getTranslated(context, "SUPPLEMENT_NAME"),
                                     style: TextStyle(
                                         color: colors.black54,fontWeight: FontWeight.w500,fontSize:12
                                     ),),
-                                  value: medicineDataa,
+                                  value: supplentName,
                                   icon:  Icon(Icons.keyboard_arrow_down_rounded,  color:colors.black54,size: 25,),
                                   style:  const TextStyle(color: colors.secondary,fontWeight: FontWeight.bold),
                                   underline: Padding(
@@ -355,17 +453,17 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                                       color:  colors.whiteTemp,
                                     ),
                                   ),
-                                  onChanged: (MedicineDataa? value) {
+                                  onChanged: (SupplentName? value) {
                                     setState(() {
-                                      medicineDataa = value!;
-                                      medicineId =  medicineDataa?.medicineId;
-                                        Id =  medicineDataa?.id;
+                                      supplentName = value!;
+                                      //medicineId =  medicineDataa?.medicineId;
+                                        Id =  supplentName?.id;
                                       getMedicineExpiryListApi(Id);
 
                                       //animalCountApi(animalCat!.id);
                                     });
                                   },
-                                  items: getMedicineModel?.data?.map((items) {
+                                  items: supplementNameListModel?.breed?.map((items) {
                                     return DropdownMenuItem(
                                       value: items,
                                       child:  Column(
@@ -378,7 +476,7 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
                                                 child: Padding(
                                                   padding: const EdgeInsets.only(top: 0),
-                                                  child: Text(items.medicineName.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
+                                                  child: Text(items.supplementName.toString(),overflow:TextOverflow.ellipsis,style: const TextStyle(color:colors.black54),),
                                                 )),
                                           ),
 
@@ -462,24 +560,28 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                 ),
 
                 mId == null ? SizedBox.shrink(): Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(getTranslated(context, 'MEDICINE_ID')),
-                        Text(mId.toString())
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(getTranslated(context, 'EXPIRY_DATE')),
-                        Text(expriy.toString())
-                      ],
-                    )
-                  ],
-              ),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(getTranslated(context, 'SUPPLEMENT_ID')),
+                          Text(":"),
+                          SizedBox(width: 2,),
+                          Text(mId.toString())
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(getTranslated(context, 'STOCK')),
+                          Text(":"),
+                          SizedBox(width: 2,),
+                          Text("${stock} $unit")
+                        ],
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(height: 15,),
                 Column(
@@ -720,40 +822,40 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                           height: 49,
                           child: InkWell(
                             onTap: (){
+                              AddSingleDateApi();
                               if(Period == null) {
 
                                 Fluttertoast.showToast(msg: "Please Fill From Day, And To Days ");
                               }else{
                                 setState(() {
-                                  medicineList.add(medicineDataa?.id.toString());
+                                  medicineList.add(supplentName?.id.toString());
                                   periodList.add(Period.toString());
                                   todayList.add(_toDays.text);
                                   fromDayList.add(_fromDays.text);
                                   timeList.add(starTimeC.text);
-                                  dayAfterList.add(dayAfter.text);
-                                  howManyList.add(howManyAfter.text);
+                                  // dayAfterList.add(dayAfter.text);
+                                  // howManyList.add(howManyAfter.text);
                                   Map<String, String> newCat = {
-                                    "medicine": "${medicineDataa?.medicineName.toString()}",
+                                    "medicine": "${supplentName?.supplementName.toString()}",
                                     "period": "${Period}",
                                     "today": "${_toDays.text}",
                                     "form": "${_fromDays.text}",
                                     "time": "${starTimeC.text}",
-                                    "day after": "${dayAfter.text}",
-                                    "how many days": "${howManyAfter.text}",
+                                    // "day after": "${dayAfter.text}",
+                                    // "how many days": "${howManyAfter.text}",
                                   };
                                   addTableList.add(newCat);
                                      _fromDays.clear();
-                                     _tagId.clear();
-                                     howManyAfter.clear();
-                                     dayAfter.clear();
+                                     //_tagId.clear();
+                                     // howManyAfter.clear();
+                                     // dayAfter.clear();
                                      //pregnantList.clear();
-                                    _toDays.clear();
-
-                                animalCat?.name == null;
+                                  _toDays.clear();
                                  unitVNew== null;
                                 });
 
                               }
+
                             },
                             child: Container(
                               height: 45,
@@ -789,10 +891,10 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                                 columns: [
                                   DataColumn(label: Text(getTranslated(context, "MEDICINE"))),
                                   DataColumn(label: Text(getTranslated(context, "PEROID"))),
-                                  DataColumn(label: Text(getTranslated(context, "FROM"))),
-                                  DataColumn(label: Text(getTranslated(context, "TO_DAYS"))),
-                                  DataColumn(label: Text('Day After')),
-                                  DataColumn(label: Text('How Many Days')),
+                                  DataColumn(label: Text(getTranslated(context, "FROM_DATE"))),
+                                  DataColumn(label: Text(getTranslated(context, "TO_DATE"))),
+                                  // DataColumn(label: Text('FROM_DATE')),
+                                  // DataColumn(label: Text('TO_DATE')),
                                   DataColumn(label: Text(getTranslated(context, "TIME"))),
 
 
@@ -804,8 +906,8 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                                      DataCell(Text(data["today"])),
                                     fromDayList.isEmpty?DataCell(Text("")):
                                     DataCell(Text(data["form"])),
-                                    DataCell(Text(data["day after"])),
-                                    DataCell(Text(data["how many days"])),
+                                    // DataCell(Text(data["day after"])),
+                                    // DataCell(Text(data["how many days"])),
                                     DataCell(Text(data["time"])),
 
 
@@ -824,7 +926,10 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                 SizedBox(height: 20,),
                 Btn(
                   onPress: (){
-                    addMedicineScheduleApi();
+                   // addMedicineScheduleApi();
+                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SupplementScheduleRecord()));
+                      //  Navigator.of(context);
+                    Fluttertoast.showToast(msg: "Add Supplement Schedule Successfully");
                     // if(_tagId.text.isEmpty){
                     //
                     // }else if(catValueNew ==  null){
@@ -1029,23 +1134,46 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
     var prms = {};
     var parameter = jsonEncode({
       // "medicine_id": extractNumbers(medicineList.toString(),),
-      "medicine_id": extractStrings(medicineList.toString(),),
+      "supplement_name": extractStrings(medicineList.toString(),),
       "period": extractStrings(periodList.toString(),),
       "to_date": extractStrings(todayList.toString()),
       "from_date": extractNumbers(fromDayList.toString()),
       "time": extractStrings(timeList.toString()),
-      "day_after": extractStrings(dayAfterList.toString()),
-      "how_many_days": extractStrings(howManyList.toString()),
+      // "day_after": extractStrings(dayAfterList.toString()),
+      // "how_many_days": extractStrings(howManyList.toString()),
     });
     prms ['shadule_data'] = parameter ;
-    prms["schedule"] = Schedule.toString();
-    prms["tag_id"]= _tagId.text;
+    // prms["schedule"] = Schedule.toString();
+    // prms["tag_id"]= _tagId.text;
     prms["status"] = catValueNew.toString();
-    prms["disease"] = weightValueNew.toString();
+  //  prms["disease"] = weightValueNew.toString();
     var response = await http.post(Uri.parse(ApiService.aadMedicineSchedule), body:prms);
     Fluttertoast.showToast(msg: "Add medicine schedule Successfully");
     Navigator.pop(context);
     print('____response_________${prms}______');
+  }
+
+
+
+  AddSingleDateApi() async {
+    var parameter = {
+      'status':catValueNew.toString(),
+      'supliment_id':supplentName?.id.toString(),
+      'period':Period.toString(),
+      'from_date':_fromDays.text,
+      'to_date':_toDays.text,
+      'time':starTimeC.text,
+
+    };
+    print('____Som______${parameter}_________');
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.addSupplementScheduleApi), parameter).then((getData) {
+      String msg = getData['message'];
+      setState(() {
+        milkFiltterModel = GetSingleDataMedicineModel.fromJson(getData);
+       // Fluttertoast.showToast(msg: "${msg}");
+      });
+
+    });
   }
 
   List<String> extractStrings(String input) {
@@ -1089,7 +1217,7 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Custom_Text(text: '${getTranslated(context, "FROM_DAYS")}'),
+            Custom_Text(text: '${getTranslated(context, "FROM_DATE")}'),
             SizedBox(height: 8,),
             GestureDetector(
                 onTap: () async {
@@ -1164,23 +1292,27 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Custom_Text(text: '${getTranslated(context, "TO_DAYS")}'),
+            Custom_Text(text: '${getTranslated(context, "TO_DATE")}'),
             SizedBox(height: 8,),
             GestureDetector(
-                onTap: () async {
-                  DateTime? datePicked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2030));
-                  if (datePicked != null) {
-                    print(
-                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                    String formettedDate =
-                    DateFormat('dd-MM-yyyy').format(datePicked);
-                    setState(() {
-                      selectedToDate = formettedDate;
 
+                onTap: () async {
+                  DateTime currentDate = DateTime.now();
+                  DateTime lastAllowedDate = DateTime(2030);
+
+                  DateTime? datePicked = await showDatePicker(
+                    context: context,
+                    initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: lastAllowedDate,
+                  );
+
+                  if (datePicked != null) {
+                    print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
+                    setState(() {
+                      selectedToDate = formattedDate;
+                      _toDays.text = formattedDate;
                     });
                   }
                 },
@@ -1195,22 +1327,23 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                     ),
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2030));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            selectedToDate = formettedDate;
-                            _toDays.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedToDate = formattedDate;
+                            _toDays.text = formattedDate;
                           });
                         }
                       },
@@ -1241,27 +1374,173 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-
+        //
+        // Column(
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: [
+        //     //Custom_Text(text: '${getTranslated(context, "FROM_DAYS")}'),
+        //     Custom_Text(text: 'FROM_DATE'),
+        //     SizedBox(height: 5,),
+        //     GestureDetector(
+        //         onTap: () async {
+        //           DateTime? datePicked = await showDatePicker(
+        //               context: context,
+        //               initialDate: DateTime.now(),
+        //               firstDate: DateTime(2000),
+        //               lastDate: DateTime(2030));
+        //           if (datePicked != null) {
+        //             print(
+        //                 'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+        //             String formettedDate =
+        //             DateFormat('dd-MM-yyyy').format(datePicked);
+        //             setState(() {
+        //               afterDayDate = formettedDate;
+        //
+        //             });
+        //           }
+        //         },
+        //         child: Card(
+        //           elevation: 1,
+        //           child: Container(
+        //             width: 150,
+        //
+        //             decoration: BoxDecoration(
+        //               borderRadius: BorderRadius.circular(5),
+        //               color: Colors.white,
+        //             ),
+        //             child:  TextFormField(
+        //               readOnly: true,
+        //               onTap:
+        //                   () async{
+        //                 DateTime? datePicked = await showDatePicker(
+        //                     context: context,
+        //                     initialDate: DateTime.now(),
+        //                     firstDate: DateTime(2000),
+        //                     lastDate: DateTime(2030));
+        //                 if (datePicked != null) {
+        //                   print(
+        //                       'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+        //                   String formettedDate =
+        //                   DateFormat('dd-MM-yyyy').format(datePicked);
+        //                   setState(() {
+        //                     afterDayDate = formettedDate;
+        //                     _fromDays.text = formettedDate;
+        //                     // getDateApi(selectedBirthDate!);
+        //                   });
+        //                 }
+        //               },
+        //               controller: _fromDays,
+        //               decoration: InputDecoration(
+        //                 border:InputBorder.none,
+        //                 contentPadding: EdgeInsets.all(10),
+        //                 hintText: 'dd-mm-yyyy',
+        //                 // border: OutlineInputBorder(
+        //                 //     borderRadius: BorderRadius.circular(10)),
+        //               ),
+        //               validator: (value){
+        //                 if(value==null||value.isEmpty)
+        //                   return "Please enter birth date";
+        //                 return null;
+        //               },
+        //             ),
+        //           ),
+        //         )
+        //     ),
+        //   ],
+        // ),
+        // Column(
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //
+        //   children: [
+        //  //   Custom_Text(text: '${getTranslated(context, "TO_DAYS")}'),
+        //     Custom_Text(text: 'FROM_DATE'),
+        //     SizedBox(height: 5,),
+        //     GestureDetector(
+        //         onTap: () async {
+        //           DateTime? datePicked = await showDatePicker(
+        //               context: context,
+        //               initialDate: DateTime.now(),
+        //               firstDate: DateTime(2000),
+        //               lastDate: DateTime(2030));
+        //           if (datePicked != null) {
+        //             print(
+        //                 'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+        //             String formettedDate =
+        //             DateFormat('dd-MM-yyyy').format(datePicked);
+        //             setState(() {
+        //               howManyDayDate = formettedDate;
+        //
+        //             });
+        //           }
+        //         },
+        //         child: Card(
+        //           elevation: 1,
+        //           child: Container(
+        //             width: 150,
+        //
+        //             decoration: BoxDecoration(
+        //               borderRadius: BorderRadius.circular(5),
+        //               color: Colors.white,
+        //             ),
+        //             child:  TextFormField(
+        //               readOnly: true,
+        //               onTap:
+        //                   () async{
+        //                 DateTime? datePicked = await showDatePicker(
+        //                     context: context,
+        //                     initialDate: DateTime.now(),
+        //                     firstDate: DateTime(2000),
+        //                     lastDate: DateTime(2030));
+        //                 if (datePicked != null) {
+        //                   print(
+        //                       'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
+        //                   String formettedDate =
+        //                   DateFormat('dd-MM-yyyy').format(datePicked);
+        //                   setState(() {
+        //                     howManyDayDate = formettedDate;
+        //                     _toDays.text = formettedDate;
+        //                     // getDateApi(selectedBirthDate!);
+        //                   });
+        //                 }
+        //               },
+        //               controller: _toDays,
+        //               decoration: InputDecoration(
+        //                 border:InputBorder.none,
+        //                 contentPadding: EdgeInsets.all(10),
+        //                 hintText: 'dd-mm-yyyy',
+        //                 // border: OutlineInputBorder(
+        //                 //     borderRadius: BorderRadius.circular(10)),
+        //               ),
+        //               validator: (value){
+        //                 if(value==null||value.isEmpty)
+        //                   return "Please enter birth date";
+        //                 return null;
+        //               },
+        //             ),
+        //           ),
+        //         )
+        //     ),
+        //   ],
+        // ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //Custom_Text(text: '${getTranslated(context, "FROM_DAYS")}'),
-            Custom_Text(text: 'Day After'),
-            SizedBox(height: 5,),
+            Custom_Text(text: '${getTranslated(context, "FROM_DATE")}'),
+            SizedBox(height: 8,),
             GestureDetector(
                 onTap: () async {
                   DateTime? datePicked = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
-                      lastDate: DateTime(2030));
+                      lastDate: DateTime(2024));
                   if (datePicked != null) {
                     print(
                         'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
                     String formettedDate =
                     DateFormat('dd-MM-yyyy').format(datePicked);
                     setState(() {
-                      afterDayDate = formettedDate;
+                      selectedFromDate = formettedDate;
 
                     });
                   }
@@ -1270,33 +1549,34 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                   elevation: 1,
                   child: Container(
                     width: 150,
-
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.white,
                     ),
+
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2030));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            afterDayDate = formettedDate;
-                            dayAfter.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedFromDate = formattedDate;
+                            _fromDays.text = formattedDate;
                           });
                         }
                       },
-                      controller: dayAfter,
+                      controller: _fromDays,
                       decoration: InputDecoration(
                         border:InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
@@ -1313,30 +1593,34 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                   ),
                 )
             ),
+
           ],
         ),
+
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
-         //   Custom_Text(text: '${getTranslated(context, "TO_DAYS")}'),
-            Custom_Text(text: 'How Many Days'),
-            SizedBox(height: 5,),
+            Custom_Text(text: '${getTranslated(context, "TO_DATE")}'),
+            SizedBox(height: 8,),
             GestureDetector(
-                onTap: () async {
-                  DateTime? datePicked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2030));
-                  if (datePicked != null) {
-                    print(
-                        'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                    String formettedDate =
-                    DateFormat('dd-MM-yyyy').format(datePicked);
-                    setState(() {
-                      howManyDayDate = formettedDate;
 
+                onTap: () async {
+                  DateTime currentDate = DateTime.now();
+                  DateTime lastAllowedDate = DateTime(2030);
+
+                  DateTime? datePicked = await showDatePicker(
+                    context: context,
+                    initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: lastAllowedDate,
+                  );
+
+                  if (datePicked != null) {
+                    print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
+                    setState(() {
+                      selectedToDate = formattedDate;
+                      _toDays.text = formattedDate;
                     });
                   }
                 },
@@ -1351,26 +1635,27 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                     ),
                     child:  TextFormField(
                       readOnly: true,
-                      onTap:
-                          () async{
+                      onTap: () async {
+                        DateTime currentDate = DateTime.now();
+                        DateTime lastAllowedDate = DateTime(2030);
+
                         DateTime? datePicked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2030));
+                          context: context,
+                          initialDate: currentDate.isBefore(lastAllowedDate) ? currentDate : lastAllowedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: lastAllowedDate,
+                        );
+
                         if (datePicked != null) {
-                          print(
-                              'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                          String formettedDate =
-                          DateFormat('dd-MM-yyyy').format(datePicked);
+                          print('Date Selected: ${datePicked.day}-${datePicked.month}-${datePicked.year}');
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(datePicked);
                           setState(() {
-                            howManyDayDate = formettedDate;
-                            howManyAfter.text = formettedDate;
-                            // getDateApi(selectedBirthDate!);
+                            selectedToDate = formattedDate;
+                            _toDays.text = formattedDate;
                           });
                         }
                       },
-                      controller: howManyAfter,
+                      controller: _toDays,
                       decoration: InputDecoration(
                         border:InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
@@ -1387,6 +1672,7 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
                   ),
                 )
             ),
+
           ],
         ),
       ],
@@ -1413,17 +1699,18 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
 
 
-  String? expriy,mId;
+  String? stock,mId,unit;
   getMedicineExpiryListApi(String? Id) async {
     var parameter = {
       'id':Id
     };
     print('_____parameter_____${parameter}_________');
-    apiBaseHelper.postAPICall(Uri.parse(ApiService.getMedicineExpiryList), parameter).then((getData) {
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getSupplementInfoList), parameter).then((getData) {
       String msg = getData['message'];
-      mId =  getData['data']['medicine_id'];
-      expriy =  getData['data']['exp_date'];
-      print('_____expriy_____${expriy}____${mId}_____');
+      mId =  getData['data']['supplement_id'];
+      stock =  getData['data']['qty'];
+      unit =  getData['data']['unit'];
+      print('_____expriy_____${stock}____${unit}_____');
 
       setState(() {
 
@@ -1435,51 +1722,6 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
 
 
-  String? catId;
-  AnimalCatList? animalCat;
-  AnimalCatResponse? animalCatResponse;
-  Future<void> animalCatApi() async {
-    apiBaseHelper.getAPICall(Uri.parse(ApiService.animalCategory)).then((getData) {
-      bool error = getData ['error'];
-      if(!error){
-        animalCatResponse = AnimalCatResponse.fromJson(getData);
-        setState(() {
-
-        });
-      }else {
-
-      }
-
-    });
-
-  }
-
-
-
-  // String? medicineId;
-  // MedicineDate? medicineData;
-  // GetMedicineModel? getMedicineModel;
-  // Future<void> getMedicineListApi() async {
-  //   apiBaseHelper.getAPICall(Uri.parse(ApiService.getMedicineList)).then((getData) {
-  //     bool error = getData ['error'];
-  //     print('___getData_______${getData}_________');
-  //     setState(() {
-  //       getMedicineModel = GetMedicineModel.fromJson(getData);
-  //     });
-  //
-  //     // if(!error){
-  //     //
-  //     //   setState(() {
-  //     //
-  //     //   });
-  //     // }else {
-  //     //
-  //     // }
-  //
-  //   });
-  //
-  // }
-
   List medicineList=[];
   List periodList=[];
   List todayList=[];
@@ -1490,4 +1732,21 @@ class _AddSupplementScheduleState extends State<AddSupplementSchedule> {
 
 
 List addTableList=[];
+
+ String? medicineName;
+  SupplentName? supplentName;
+  SupplementNameListModel? supplementNameListModel;
+  Future<void> getSupplementApi() async {
+    apiBaseHelper.getAPICall(Uri.parse(ApiService.getSupplementList)).then((getData) {
+      print('_____getData_____${getData}_________');
+      String msg = getData ['message'];
+      setState(() {
+
+      });
+      supplementNameListModel = SupplementNameListModel.fromJson(getData);
+      Fluttertoast.showToast(msg: "${msg}");
+
+    });
+
+  }
 }

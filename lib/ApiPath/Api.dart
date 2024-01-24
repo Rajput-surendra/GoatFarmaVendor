@@ -2,26 +2,26 @@
 import 'apiBasehelper.dart';
 ApiBaseHelper apiBaseHelper = ApiBaseHelper();
 class ApiService {
- static const String baseUrl = "https://developmentalphawizz.com/goat_farm/app/v1/api/";
-  static const String imageUrl = "https://developmentalphawizz.com/goat_farm/";
-  static const String userTypeApi = baseUrl+'user_type';
-  static const String register = baseUrl+'register';
-  static const String login = baseUrl+'login';
-  static const String userPermission = baseUrl+'users_permission';
-  static const String animalCategory = baseUrl+'animal_category';
-  static const String purchaseCategory = baseUrl+'purchase_categories';
-  static const String animalCount = baseUrl+'animal_counts';
-  static const String addPurchase = baseUrl+'add_purchase';
-  static const String purchaseList = baseUrl+'purchase_list';
-  static const String addBreed = baseUrl+'add_breed';
-  static const String breedList = baseUrl+'breed_list';
-  static const String animalCatList = baseUrl+'animal_subcategory';
-  static const String addAnimal = baseUrl+'add_animal';
-  static const String animalList = baseUrl+'animal_list';
+  static const String  baseUrl = "https://developmentalphawizz.com/goat_farm/app/v1/api/";
+  static const String  imageUrl = "https://developmentalphawizz.com/goat_farm/";
+  static const String  userTypeApi = baseUrl+'user_type';
+  static const String  register = baseUrl+'register';
+  static const String  login = baseUrl+'login';
+  static const String  userPermission = baseUrl+'users_permission';
+  static const String  animalCategory = baseUrl+'animal_category';
+  static const String  purchaseCategory = baseUrl+'purchase_categories';
+  static const String  animalCount = baseUrl+'animal_counts';
+  static const String  addPurchase = baseUrl+'add_purchase';
+  static const String  purchaseList = baseUrl+'purchase_list';
+  static const String  addBreed = baseUrl+'add_breed';
+  static const String  breedList = baseUrl+'breed_list';
+  static const String  animalCatList = baseUrl+'animal_subcategory';
+  static const String  addAnimal = baseUrl+'add_animal';
+  static const String  animalList = baseUrl+'animal_list';
   static const String  addWeight = baseUrl+'add_weight';
   static const String  matingAnimalDate = baseUrl+'meating_animal_data';
- static const String  checkBreedMating = baseUrl+'check_breed';
- static const String  addMating = baseUrl+'add_meating';
+  static const String  checkBreedMating = baseUrl+'check_breed';
+  static const String  addMating = baseUrl+'add_meating';
   static const String  getWeight = baseUrl+'get_weight';
   static const String  getLatWeight = baseUrl+'get_last_weight';
   static const String  addMilk = baseUrl+'add_milk';
@@ -34,7 +34,7 @@ class ApiService {
   static const String  punchOut = baseUrl+'punch_out';
   static const String  checkStatus = baseUrl+'check_attendance';
   static const String  matiating = baseUrl+'add_meating';
- static const String  checngAnimalDate = baseUrl+'meating_animal_data';
+  static const String  checngAnimalDate = baseUrl+'meating_animal_data';
   static const String  addMkBreedMating = baseUrl+'check_breed';
   static const String  getMatingList = baseUrl+'meating_list';
   static const String  getSupplementList = baseUrl+'suplimet_list';
@@ -47,6 +47,7 @@ class ApiService {
   static const String  getMedicineSingleList = baseUrl+'medicine_list_single';
   static const String  getMedicineExpiryList = baseUrl+'get_medicine_expiry';
   static const String  deleteMedicineApi = baseUrl+'delete_medicine';
+  static const String  deleteSupplementApi = baseUrl+'delete_suppliments';
   static const String  updateMedicineApi = baseUrl+'update_medicine_data';
   static const String  getSingleMedicineApi = baseUrl+'get_single_medicine';
   static const String  getMedicineDuaList = baseUrl+'medicine_due_records';
@@ -54,8 +55,13 @@ class ApiService {
   static const String  getBreedingList = baseUrl+'get_breed_animal';
   static const String  getDateList = baseUrl+'age_calculate';
   static const String  addSupplement = baseUrl+'add_supplement';
+  static const String  getSupplementInfoList = baseUrl+'supplement_info';
   static const String  getSupplementDetails = baseUrl+'supliment_data';
   static const String  getSupplementDueRecord = baseUrl+'supliment_due';
+  static const String  addSupplementScheduleApi = baseUrl+'supplement_shadule_record';
+  static const String  getSupplementScheduleApi = baseUrl+'get_supliment_shadule_data';
+  static const String  deleteSupplementScheduleApi = baseUrl+'delete_supliment_shadule';
+
 }
 
 

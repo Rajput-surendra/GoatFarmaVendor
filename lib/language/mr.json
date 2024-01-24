@@ -137,6 +137,8 @@
   "QTY": "मात्रा.",
   "MFG_DATE": "Mfg Date",
   "EXP. DATE": "Exp. Date",
+  "FROM_DATE": "या तारखेपासून",
+  "TO_DATE": "आजपर्यंत",
   "BODY_WEIGHT": "शरीराचे वजन",
   "DOSE": "डोस",
   "DIRECTION": "दिशा",
@@ -302,8 +304,8 @@
   "ENTER_WEIGHT":"वजन प्रविष्ट करा",
   "SUPPLEMENT_DUE_RECORD":"सप्लिमेंट देय रेकॉर्ड",
   "SCAN_BREED":"स्कॅन जातीचा प्रकार",
-  "AVL_STOCK":"एवीएल. स्टॉकक"
-
+  "AVL_STOCK":"एवीएल. स्टॉकक",
+ "DELETE": "हटवा"
 
 
 

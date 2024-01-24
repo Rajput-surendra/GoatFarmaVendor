@@ -284,6 +284,8 @@
    "PEROID": "अवधि",
    "FROM_DAYS": "दिनों से",
    "TO_DAYS": "आज तक",
+   "FROM_DATE": "की तिथि से",
+   "TO_DATE": "तारीख तक",
    "FROM": "से",
    "MEDICINE_CONSUME": "दवा का उपभोग करें",
    "LAST_MEDICINE": "आखिरी दवा",
@@ -314,6 +316,7 @@
    "SCAN_PRODUCT": "उत्पाद स्कैन करें",
    "CURIER": "क्यूरियर",
    "TRACKING_ID": "ट्रैकिंग आईडी",
-   "ENGLISH_LAN" : "English"
+   "ENGLISH_LAN" : "English",
+   "DELETE": "मिटाना"
 }
 

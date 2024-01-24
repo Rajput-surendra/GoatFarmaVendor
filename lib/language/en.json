@@ -149,6 +149,8 @@
  "TIME": "Time",
  "FROM": "From",
  "DAYS": "Days",
+ "FROM_DATE": "From Date",
+ "TO_DATE": "To Date",
  "HINDI_LAN": "Hindi",
  "MEDICINE_DUE_RECORD": "Medicine Due Record",
  "VACCINE": "Vaccine",
@@ -291,7 +293,7 @@
  "EXPIRY":"Expiry",
  "BALANCE":"Balance",
  "MEDICINE_RECORD":"Medicine Record",
- "SUPPLEMENT_CONSUME":"Image",
+ "SUPPLEMENT_CONSUME":"Supplement Consume",
  "BREED_TYPE":"Breed type",
  "TOTAL_KIDS":"Total Kids",
  "TOTAL_WEIGHT":"Total Weight",
@@ -301,8 +303,8 @@
  "ENTER_WEIGHT":"Enter Weight",
  "SUPPLEMENT_DUE_RECORD":"Supplement Due Record",
  "SCAN_BREED":"Scan Breed Type",
- "AVL_STOCK":"Avl. Stock"
-
+ "AVL_STOCK":"Avl. Stock",
+ "DELETE":"Delete"
 
 
 

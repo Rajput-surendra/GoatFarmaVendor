@@ -1,9 +1,9 @@
 /// error : false
-/// message : "Record Sucessfully Get !"
-/// data : [{"id":"6","status":"All","supliment_id":"5","period":"One Time","from_date":"25-01-2024","to_date":"26-01-2024","time":"06:36 PM","created_at":"2024-01-23 16:38:39"},{"id":"7","status":"All","supliment_id":"5","period":"Continues","from_date":"26-01-2024","to_date":"31-01-2024","time":"08:38 PM","created_at":"2024-01-23 16:39:33"},{"id":"8","status":"Empty","supliment_id":"5","period":"One Time","from_date":"24-01-2024","to_date":"31-01-2024","time":"07:52 PM","created_at":"2024-01-23 17:54:02"},{"id":"9","status":"Pregnant","supliment_id":"5","period":"Continues","from_date":"25-01-2024","to_date":"31-01-2024","time":"07:15 PM","created_at":"2024-01-23 18:16:47"}]
+/// message : "Record Get Sucessfully !"
+/// data : [{"id":"3","status":"All","supliment_id":"Goat123","period":"one time","from_date":"23-01-2024","to_date":"27-01-2024","time":"Evening","created_at":"2024-01-23 15:57:56"},{"id":"6","status":"All","supliment_id":"5","period":"One Time","from_date":"25-01-2024","to_date":"26-01-2024","time":"06:36 PM","created_at":"2024-01-23 16:38:39"},{"id":"7","status":"All","supliment_id":"5","period":"Continues","from_date":"26-01-2024","to_date":"31-01-2024","time":"08:38 PM","created_at":"2024-01-23 16:39:33"},{"id":"8","status":"Empty","supliment_id":"5","period":"One Time","from_date":"24-01-2024","to_date":"31-01-2024","time":"07:52 PM","created_at":"2024-01-23 17:54:02"}]
 
-class GetSupplementDueRecordModel {
-  GetSupplementDueRecordModel({
+class GetSupplementScheduleListModel {
+  GetSupplementScheduleListModel({
       bool? error, 
       String? message, 
       List<Data>? data,}){
@@ -12,7 +12,7 @@ class GetSupplementDueRecordModel {
     _data = data;
 }
 
-  GetSupplementDueRecordModel.fromJson(dynamic json) {
+  GetSupplementScheduleListModel.fromJson(dynamic json) {
     _error = json['error'];
     _message = json['message'];
     if (json['data'] != null) {
@@ -25,10 +25,10 @@ class GetSupplementDueRecordModel {
   bool? _error;
   String? _message;
   List<Data>? _data;
-GetSupplementDueRecordModel copyWith({  bool? error,
+GetSupplementScheduleListModel copyWith({  bool? error,
   String? message,
   List<Data>? data,
-}) => GetSupplementDueRecordModel(  error: error ?? _error,
+}) => GetSupplementScheduleListModel(  error: error ?? _error,
   message: message ?? _message,
   data: data ?? _data,
 );
@@ -48,14 +48,14 @@ GetSupplementDueRecordModel copyWith({  bool? error,
 
 }
 
-/// id : "6"
+/// id : "3"
 /// status : "All"
-/// supliment_id : "5"
-/// period : "One Time"
-/// from_date : "25-01-2024"
-/// to_date : "26-01-2024"
-/// time : "06:36 PM"
-/// created_at : "2024-01-23 16:38:39"
+/// supliment_id : "Goat123"
+/// period : "one time"
+/// from_date : "23-01-2024"
+/// to_date : "27-01-2024"
+/// time : "Evening"
+/// created_at : "2024-01-23 15:57:56"
 
 class Data {
   Data({

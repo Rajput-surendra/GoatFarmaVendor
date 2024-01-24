@@ -26,6 +26,7 @@ class _DetailsSupplementRecordState extends State<DetailsSupplementRecord> {
 
   @override
   Widget build(BuildContext context) {
+    print('____Som______${widget.mId}_________');
     final size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: customAppBar(
@@ -46,7 +47,7 @@ class _DetailsSupplementRecordState extends State<DetailsSupplementRecord> {
                             shrinkWrap: true,
                             reverse: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: getMedicineModel!.breed!.length,
+                            itemCount: getMedicineModel?.breed?.length ?? 0,
                             itemBuilder: (context, index) {
                               return  Card(
                                 child: Padding(
@@ -61,28 +62,28 @@ class _DetailsSupplementRecordState extends State<DetailsSupplementRecord> {
                                            children: [
                                              Text(getTranslated(context, "STATUS")),
                                              SizedBox(height: 5,),
-                                             Text("${getMedicineModel!.breed![index].category}")
+                                             Text("${getMedicineModel?.breed?[index].category}")
                                            ],
                                          ),
                                          Column(
                                            children: [
                                              Text(getTranslated(context, "BODY_WEIGHT")),
                                              SizedBox(height: 5,),
-                                             Text("${getMedicineModel!.breed![index].bodyWeight}")
+                                             Text("${getMedicineModel?.breed?[index].bodyWeight}")
                                            ],
                                          ),
                                          Column(
                                            children: [
                                              Text(getTranslated(context, "DOSE")),
                                              SizedBox(height: 5,),
-                                             Text("${getMedicineModel!.breed![index].dose}")
+                                             Text("${getMedicineModel?.breed?[index].dose}")
                                            ],
                                          ),
                                          Column(
                                            children: [
                                              Text(getTranslated(context, "UNIT")),
                                              SizedBox(height: 5,),
-                                             Text("${getMedicineModel!.breed![index].unit}")
+                                             Text("${getMedicineModel?.breed?[index].unit}")
                                            ],
                                          ),
                                        ],
