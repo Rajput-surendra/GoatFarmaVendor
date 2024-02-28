@@ -26,7 +26,6 @@ class _DetailsSupplementRecordState extends State<DetailsSupplementRecord> {
 
   @override
   Widget build(BuildContext context) {
-    print('____Som______${widget.mId}_________');
     final size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: customAppBar(
@@ -102,9 +101,7 @@ class _DetailsSupplementRecordState extends State<DetailsSupplementRecord> {
 
   getMedicineListApi() async {
     var parameter = {'supliment_id': widget.mId};
-    print("------Surendra-------${parameter}----------");
-    apiBaseHelper
-        .postAPICall(Uri.parse(ApiService.getSupplementDetails), parameter)
+    apiBaseHelper.postAPICall(Uri.parse(ApiService.getSupplementDetails), parameter)
         .then((getData) {
       String msg = getData['message'];
       setState(() {
